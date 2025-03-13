@@ -1,0 +1,148 @@
+.first-page-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(193.33deg, rgba(79, 249, 187, 0.69) 9.58%, rgba(13, 80, 195, 0.69) 51.15%, rgba(29, 102, 110, 0.69) 92.72%);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.logo-container {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 80px;
+  height: 80px;
+  background: url('/public/poze/Logo1.png') no-repeat center center;
+  background-size: contain;
+}
+
+.image-container {
+  width: 400px;
+  height: 600px;
+  background: url('/public/poze/firstPage.jpg') no-repeat center center;
+  background-size: cover;
+  border-radius: 50px;
+  border: 5px solid #FFFFFF;
+  box-shadow: inset 0px 10px 4px rgba(0, 0, 0, 0.25);
+  margin-right: 20px;
+}
+
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 500px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 40px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.text2-camp, h2 {
+  color: #000;
+  font-family: 'Times New Roman', serif;
+  font-size: 16px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 20px;
+  background: #FFFFFF;
+}
+
+.password-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.show-button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #6694CF;
+}
+
+.show-button i {
+  font-size: 20px;
+}
+
+.divider {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.divider::after {
+  content: "";
+  display: block;
+  width: 400px;
+  height: 2px;
+  background: #fff;
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.login-button, .signup-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 1000px;
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.login-button {
+  background: #82F8CD;
+  color: #5E8FA4;
+}
+
+.signup-button {
+  background: #66B8CF;
+  color: #fff;
+}
+
+.forgot-password, .create-account {
+  color: #fff;
+  text-decoration: underline;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 10px;
+}
