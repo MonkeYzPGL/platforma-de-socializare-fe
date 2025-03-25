@@ -19,7 +19,7 @@ const FirstPage = () => {
         <div className="password-container">
           <input
             type={passwordVisible ? "text" : "password"}
-            placeholder="password123"
+            placeholder="password123@"
             className="input-field"
           />
           <button className="show-button" onClick={() => setPasswordVisible(!passwordVisible)}>
