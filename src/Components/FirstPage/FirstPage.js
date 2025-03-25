@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./FirstPage.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import { Link } from "react-router-dom";
 
 const FirstPage = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -26,7 +27,7 @@ const FirstPage = () => {
           </button>
         </div>
         <button className="login-button">Login</button>
-        <a href="#" className="forgot-password">Forgot your password?</a>
+        <Link to="/reset-password" className="forgot-password">Forgot your password?</Link>
         <div className="divider">Or</div>
         <p className="create-account">Create an account for free</p>
         <button className="signup-button">Sign Up</button>
