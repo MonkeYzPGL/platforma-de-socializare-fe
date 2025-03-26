@@ -52,7 +52,7 @@ const ResetPassword = () => {
 
   const handleSubmit = () => {
     if (formIsValid) {
-      history.push("/");
+      history.push("/password-changed");
     }
   };
 

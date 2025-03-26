@@ -2,6 +2,8 @@ import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import FirstPage from './Components/FirstPage/FirstPage';
 import ResetPassword from './Components/ResetPassword/ResetPassword';
+import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
+
 
 import ErrorPage from './commons/errorhandling/error-page';
 
@@ -29,6 +31,12 @@ class App extends React.Component {
                             path='/reset-password'
                             render={() => <ResetPassword />}
 
+                        />
+                    
+                        <Route
+                            exact
+                            path='/password-changed'
+                            render={() => <PasswordChanged />}
                         />
                         
                         {/*Error*/}
