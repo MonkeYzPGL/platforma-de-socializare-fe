@@ -1,7 +1,7 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-import FirstPage from './FirstPage/FirstPage';
-
+import FirstPage from './Components/FirstPage/FirstPage';
+import ResetPassword from './Components/ResetPassword/ResetPassword';
 
 import ErrorPage from './commons/errorhandling/error-page';
 
@@ -22,7 +22,15 @@ class App extends React.Component {
                             path='/'
                             render={() => <FirstPage/>}
                         />
+                        
+                        {/*Reset Password*/}
+                        <Route
+                            exact
+                            path='/reset-password'
+                            render={() => <ResetPassword />}
 
+                        />
+                        
                         {/*Error*/}
                         <Route
                             exact
