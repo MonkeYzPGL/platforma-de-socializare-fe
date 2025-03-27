@@ -15,7 +15,6 @@ const ResetPassword = () => {
   const history = useHistory();
   const [focusedField, setFocusedField] = useState(null);
 
-
   useEffect(() => {
     const errors = [];
     if (password.length < 8) errors.push("Password must be at least 8 characters.");
