@@ -139,7 +139,7 @@ const ResetPassword = () => {
         disabled={!formIsValid}
         style={{ opacity: formIsValid ? 1 : 0.5, cursor: formIsValid ? "pointer" : "not-allowed" }}
       >
-        Sign Up
+        Reset Password
       </button>
     </div>
   );
