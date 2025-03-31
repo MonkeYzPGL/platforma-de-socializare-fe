@@ -1,5 +1,7 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
+import FirstPage from './FirstPage/FirstPage';
+import SignUpPage from './SignUpPage/SignUpPage';
 import FirstPage from './Components/FirstPage/FirstPage';
 import ResetPassword from './Components/ResetPassword/ResetPassword';
 import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
@@ -24,6 +26,14 @@ class App extends React.Component {
                             path='/'
                             render={() => <FirstPage/>}
                         />
+
+                        {/*Sign Up*/}
+                        <Route
+                            exact
+                            path='/signup'
+                            render={() => <SignUpPage/>}
+                        />
+
                         
                         {/*Reset Password*/}
                         <Route
