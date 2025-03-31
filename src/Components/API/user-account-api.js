@@ -19,11 +19,9 @@ function login(username, password, callback) {
         body: JSON.stringify(payload)
     });
 
-    console.log("URL: " + request.url);
-
     RestApiClient.performRequest(request, (result, status, error) => {
         if (status === 200) {
-            console.log(result);
+            console.log("URL: " + request.url);
         }
         callback(result, status, error);
     });

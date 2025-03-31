@@ -16,9 +16,12 @@ const FirstPage = () => {
       if(status === 200)
       {
         console.log(result);
-        // const userAccountDTO = result;
-        // setuserAccount(userAccountDTO);
+        localStorage.setItem('user', JSON.stringify(result));
         history.push('');
+      } else if (status === 204){
+        alert("User not found");
+      } else {
+        alert("Login error");
       }
     })
   }
