@@ -3,7 +3,7 @@
   box-sizing: border-box;
   position: relative;
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   margin: 0;
   background: linear-gradient(193.33deg, rgba(79, 249, 187, 0.69) 9.58%, rgba(13, 80, 195, 0.69) 51.15%, rgba(29, 102, 110, 0.69) 92.72%);
   overflow: hidden;
@@ -12,13 +12,13 @@
   align-items: center;
   justify-content: center;
   font-family: 'Inria Serif', serif;
-  padding: 0;
+  padding: 0 1rem;
 }
 
 /* Logo */
 .logo {
-  width: 120px;
-  height: 120px;
+  width: clamp(80px, 10vw, 120px);
+  height: clamp(80px, 10vw, 120px);
   background: url('/public/poze/Logo1.png') no-repeat center center;
   background-size: cover;
   position: absolute;
@@ -29,7 +29,8 @@
 }
 
 .signup-form-box {
-  width: 600px;
+  width: 100%;
+  max-width: 600px;
   border: 3px solid #FFFFFF;
   border-top: none;
   border-radius: 46px;
@@ -87,7 +88,7 @@
 
 .label-sign-up {
   color: white;
-  font-size: 18px;
+  font-size: 1rem;
   font-weight: bold;
   margin-bottom: 6px;
 }
@@ -96,7 +97,7 @@
   height: 45px;
   border-radius: 8px;
   padding: 0 15px;
-  font-size: 16px;
+  font-size: 1rem;
   background: rgba(255, 255, 255, 0.15);
   color: white;
   border: 1px solid white;
@@ -123,28 +124,29 @@
   background: none;
   border: none;
   color: rgb(0, 0, 0);
-  font-size: 20px;
+  font-size: 1.2rem;
   cursor: pointer;
   z-index: 2;
 }
 
 .error-text {
   color: #ff4f4f;
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 500;
   margin-top: 5px;
 }
 
 /* Sign Up button */
 .signup-submit-btn {
-  width: 300px;
-  height: 60px;
+  width: 80%;
+  max-width: 300px;
+  height: 55px;
   background: #66B8CF;
   border-radius: 1000px;
   border: none;
   color: #FFFFFF;
   font-weight: 700;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-family: 'Inria Serif', serif;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -157,23 +159,45 @@
   background: #5aa4b9;
 }
 
+/* 📱 Small screens: Mobile */
+@media (max-width: 480px) {
+  .signup-form-box {
+    padding: 60px 20px 30px;
+  }
+
+  .signup-submit-btn {
+    font-size: 1rem;
+    height: 50px;
+  }
+
+  .input-sign-up {
+    font-size: 0.95rem;
+  }
+}
+
+/* 📏 Shorter height */
 @media (max-height: 900px) {
   .signup-container {
     padding-top: 20px;
   }
 
   .signup-form-box {
-    transform: scale(0.9);
+    transform: scale(0.95);
   }
 }
 
+/* 💻 Tablets */
 @media (max-width: 768px) {
   .signup-form-box {
     width: 90%;
-    padding: 80px 20px 40px;
+    padding: 70px 25px 40px;
   }
 
   .signup-submit-btn {
-    width: 80%;
+    width: 100%;
   }
+}
+
+.signup-container {
+  overflow-y: auto;
 }
