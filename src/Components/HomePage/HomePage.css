@@ -7,7 +7,7 @@
     font-family: Arial, sans-serif;
   }
   
-  .logo {
+  .homepage-logo {
     position: absolute;
     top: -40px;
     left: -40px;
@@ -19,7 +19,7 @@
     z-index: 2;
   }
   
-  .profile-header {
+  .homepage-profile-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -28,14 +28,15 @@
     position: relative;
   }
   
-  .profile-info {
+  .homepage-profile-info {
     display: flex;
     gap: 30px;
     max-width: 70%;
     margin-top: 20px;
+    flex: 1;
   }
   
-  .profile-pic {
+  .homepage-profile-pic {
     width: 120px;
     height: 120px;
     border-radius: 50%;
@@ -48,9 +49,8 @@
     flex-shrink: 0;
   }
   
-  /* Icon edit (opțional, dacă e folosit ca span) */
-  .profile-pic .edit-icon,
-  .profile-pic::after {
+  .homepage-profile-pic::after {
+    content: "✏️";
     position: absolute;
     bottom: 0;
     right: 0;
@@ -69,89 +69,87 @@
     z-index: 5;
   }
   
+  .homepage-profile-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
   
-  
-  
-  .profile-text h1 {
+  .homepage-name {
     margin: 0;
     font-size: 28px;
     font-weight: bold;
     color: #000;
   }
   
-  .profile-text h2 {
-    margin: 5px 0;
-    font-size: 18px;
+  .homepage-mail {
+    margin-top: 4px;
+    font-size: 26px;
     color: #3495c1;
+    align-self: flex-start;
   }
   
-  .profile-text p {
-    font-size: 18px;
+  .homepage-description {
+    margin-top: 10px;
+    font-size: 22px;
     color: white;
     line-height: 1.6;
-    max-width: 800px;
+    text-align: justify;
+    max-width: 100%;
   }
   
-  .profile-buttons {
+  .homepage-profile-buttons {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
   }
   
-  .profile-buttons button {
-    padding: 10px 20px;
+  .homepage-profile-buttons button {
+    padding: 14px 100px; /* mai mare */
     border: none;
     border-radius: 8px;
-    font-size: 14px;
-    cursor: pointer;
-  }
-  
-  .friend-list {
-    background-color: #66b8cf;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: white;
-  }
-  
-  .friend-list span {
-    margin-left: 10px;
-    font-weight: bold;
-  }
-  
-  .edit-profile {
-    background-color: #6694cf;
-    color: white;
-  }
-  
-  .add-photo {
-    background-color: #5dc9f0;
-    color: white;
-  }
-  
-  .logout {
-    background-color: #f06969;
-    color: white;
-  }
-  
-  /* Hover effect for all buttons */
-  .button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 14px;
+    font-size: 18px; /* mai mare */
+    font-weight: 600;
     cursor: pointer;
     color: white;
+    min-width: 160px; /* mai lat */
+  }
+  
+  .homepage-button {
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  .button:hover {
+  .homepage-button:hover {
     background-color: #008CBA;
     color: white;
   }
   
-  /* Grid galerie */
-  .photo-gallery {
+  .homepage-friend-list {
+    background-color: #5dc9f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .homepage-friend-list span {
+    margin-left: 10px;
+    font-weight: bold;
+  }
+  
+  .homepage-edit-profile {
+    background-color: #5dc9f0;
+  }
+  
+  .homepage-add-photo {
+    background-color: #5dc9f0;
+  }
+  
+  .homepage-logout {
+    background-color: #f06969;
+  }
+  
+  /* Galerie */
+  .homepage-photo-gallery {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
@@ -159,7 +157,7 @@
     padding: 0 10px;
   }
   
-  .photo-wrapper {
+  .homepage-photo-wrapper {
     width: 100%;
     height: 100%;
     background-color: white;
@@ -169,7 +167,7 @@
     box-sizing: border-box;
   }
   
-  .photo {
+  .homepage-photo {
     width: 100%;
     height: 100%;
     border-radius: 12px;
@@ -180,16 +178,31 @@
     transition: transform 0.2s ease;
   }
   
-  .photo:hover {
+  .homepage-photo:hover {
     transform: scale(1.03);
   }
   
-  .photo1,
-  .photo2,
-  .photo3,
-  .photo4,
-  .photo5,
-  .photo6 {
-    background-image: url('/public/poze/firstPage.jpg'); /* asigură-te că fișierul există */
+  .homepage-photo1,
+  .homepage-photo2,
+  .homepage-photo3,
+  .homepage-photo4,
+  .homepage-photo5,
+  .homepage-photo6 {
+    background-image: url('/public/poze/firstPage.jpg');
+  }
+  
+  .homepage-profile-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    column-gap: 10px;
+    width: 100%;
+  }
+  
+  .homepage-divider {
+    width: 2px;
+    background-color: rgba(0, 0, 0, 0.4);
+    margin: 0 10px;
+    align-self: stretch;
   }
   
