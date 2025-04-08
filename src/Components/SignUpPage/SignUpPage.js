@@ -194,8 +194,7 @@ const SignUpPage = () => {
             <button
               type="button"
               className="show-button"
-              onClick={() => setRepeatVisible(!repeatVisible)}
-            >
+              onClick={() => setRepeatVisible(!repeatVisible)}>
               <i className={repeatVisible ? "fa fa-eye-slash" : "fa fa-eye"}></i>
             </button>
           </div>
