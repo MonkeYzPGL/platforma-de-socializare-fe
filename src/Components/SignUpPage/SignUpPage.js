@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./SignUpPage.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import {useHistory} from "react-router-dom";
+import { signup } from "../API/user-account-api";
+
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +14,29 @@ const SignUpPage = () => {
     password: "",
     repeatPassword: ""
   });
+
+
+  const handleSubmit = () => {
+    if (formIsValid) {
+      const userPayload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      };
+  
+      signup(userPayload, (result, status, error) => {
+        if (status === 200) {
+          console.log("result");
+          history.push("/account-created");
+        } else {
+          alert("Signup failed: " + (error || "unknown error"));
+        }
+      });
+    }
+  };
+  
 
   const history = useHistory();
 
@@ -68,12 +93,6 @@ const SignUpPage = () => {
     passwordErrors.length === 0 &&
     !matchError &&
     !emailError;
-
-  const handleSubmit = () => {
-    if (formIsValid) {
-      history.push('');
-    }
-  };
 
   return (
     <div className="signup-container">

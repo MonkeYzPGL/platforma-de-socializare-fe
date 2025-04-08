@@ -21,8 +21,10 @@ const FirstPage = (props) => {
         history.push('');
       } else if (status === 204){
         alert("User not found");
+      } else if (status ===403){
+        alert("Wait for the admin to validate your account!");
       } else {
-        alert("Login error");
+        alert("Error");
       }
     })
   }
