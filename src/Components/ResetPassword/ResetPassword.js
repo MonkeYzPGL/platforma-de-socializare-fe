@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./ResetPassword.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useHistory } from "react-router-dom";
+import {resetPassword} from '../API/user-account-api';
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -14,6 +15,19 @@ const ResetPassword = () => {
   const [emailError, setEmailError] = useState("");
   const history = useHistory();
   const [focusedField, setFocusedField] = useState(null);
+
+  const handleSubmit = () => {
+    if (formIsValid) {
+      resetPassword(email, password, (result, status, error) => {
+        if (status === 200) {
+          history.push("/password-changed");
+        } else {
+          alert("Failed to reset password. Please try again.");
+          console.error("Error:", error);
+        }
+      });
+    }
+  };
 
   useEffect(() => {
     const errors = [];
@@ -48,12 +62,6 @@ const ResetPassword = () => {
     passwordErrors.length === 0 &&
     !matchError &&
     !emailError;
-
-  const handleSubmit = () => {
-    if (formIsValid) {
-      history.push("/password-changed");
-    }
-  };
 
   return (
     <div className="reset-password-container">
