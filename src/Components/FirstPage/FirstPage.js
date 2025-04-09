@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { withRouter } from "react-router-dom"; // ✅ corect pentru v5
+import { withRouter } from "react-router-dom";
 import "./FirstPage.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import {login} from '../API/user-account-api';
@@ -10,7 +10,7 @@ const FirstPage = (props) => {
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
- const history = useHistory();
+  const history = useHistory();
 
   const handleLogin = () => {
     login(username, password, (result, status, error) => {
@@ -66,4 +66,4 @@ const FirstPage = (props) => {
 };
 
 
-export default withRouter(FirstPage); // ✅ esențial
+export default withRouter(FirstPage);
