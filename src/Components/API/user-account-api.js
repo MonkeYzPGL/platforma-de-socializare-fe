@@ -1,4 +1,5 @@
 
+//import { RiGitPullRequestFill } from "react-icons/ri";
 import RestApiClient from "./rest-client";
 const HOST = {
     user_api: "http://localhost:8080/api/v1/userAccount"
@@ -6,7 +7,6 @@ const HOST = {
 
 function login(username, password, callback) {
     const payload = {
-        username: username,
         password: password
     };
 
@@ -27,9 +27,31 @@ function login(username, password, callback) {
     });
 }
 
+function resetPassword(email, newPassword, callback) {
+    const payload = {
+        password: newPassword
+    };
+
+    const request = new Request(HOST.user_api + "/resetPassword/" + email, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Password reset request sent to: " + request.url);
+        }
+        callback(result, status, error);
+    });
+}
 
 export {
 
     login,
+    resetPassword,
 
 };
