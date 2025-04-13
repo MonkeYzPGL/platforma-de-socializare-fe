@@ -32,6 +32,7 @@ export default function HomePage() {
             <button className="homepage-button homepage-friend-list">
               Friend List <span>23</span>
             </button>
+            <button className="homepage-button homepage-add-friend">Add New Friends</button>
             <button className="homepage-button homepage-edit-profile">Edit Profile</button>
             <button className="homepage-button homepage-add-photo">Add Photo</button>
             <button className="homepage-button homepage-logout">Log Out</button>
