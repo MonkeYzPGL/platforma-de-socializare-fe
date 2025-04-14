@@ -1,0 +1,233 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .edit-profile-page {
+    background: linear-gradient(193.33deg, rgba(79, 249, 187, 0.69) 9.58%, rgba(13, 80, 195, 0.69) 51.15%, rgba(29, 102, 110, 0.69) 92.72%);
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+  }
+  
+  .edit-logo {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 80px;
+    height: 80px;
+    background-image: url("/public/poze/Logo1.png");
+    background-size: cover;
+    background-position: center;
+    z-index: 5;
+  }
+  
+  .edit-profile-container {
+    max-width: 590px;
+    width: 100%;
+    background: #fff;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+  }
+  
+  .edit-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  
+  .profile-avatar {
+    width: 70px;
+    height: 70px;
+    background-image: url("/public/poze/ade.jpeg");
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+  }
+  
+  .profile-avatar::after {
+    content: "✏️";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: white;
+    color: black;
+    border-radius: 50%;
+    font-size: 12px;
+    padding: 4px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 4px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    z-index: 5;
+  }
+  
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .name {
+    font-size: 20px;
+    font-weight: 400;
+    color: #1F2937;
+  }
+  
+  .email {
+    font-size: 16px;
+    color: #6B7280;
+  }
+  
+  .edit-profile-divider {
+    border: 1px solid #E5E7EB;
+    width: 100%;
+  }
+  
+  .edit-profile-divider.light {
+    border-color: #F3F4F6;
+  }
+  
+  .edit-profile-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .edit-profile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  
+  .edit-profile-label {
+    font-size: 18px;
+    color: #1F2937;
+    width: 40%;
+    min-width: 120px;
+  }
+  
+  .edit-profile-input {
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    color: #4B5563;
+    width: 55%;
+    padding: 8px 0;
+    border: none;
+    border-bottom: 1px solid #E5E7EB;
+    background: transparent;
+    outline: none;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .edit-profile-input:focus {
+    border-color: #2563eb;
+    background-color: transparent;
+  }
+  
+  .edit-profile-input::placeholder {
+    color: #9ca3af;
+  }
+  
+  .edit-profile-actions {
+    margin-top: 20px;
+  }
+  
+  .save-button {
+    padding: 10px 38px;
+    background-color: #2489FF;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .save-button:hover {
+    background-color: #1a6fd8;
+  }
+
+  .close-button {
+    position: absolute;
+    top: 20px;
+    right: 50px;
+    font-size: 30px;
+    font-weight: 300;
+    color: #1F2937;
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+    z-index: 10;
+  }
+  
+  .close-button:hover {
+    color: #000;
+    transform: scale(1.2);
+  }
+  
+  
+  /* Tablet & below */
+  @media (max-width: 768px) {
+    .edit-profile-container {
+      width: 90%;
+      padding: 24px;
+    }
+  
+    .edit-profile-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  
+    .edit-profile-label,
+    .edit-profile-input {
+      width: 100%;
+    }
+  
+    .edit-logo {
+      top: 10px;
+      left: 10px;
+      width: 60px;
+      height: 60px;
+    }
+  
+    .profile-info {
+      margin-left: 0;
+    }
+  
+    .save-button {
+      width: 100%;
+      padding: 12px;
+    }
+  }
+  
+  /* Mobile narrow */
+  @media (max-width: 480px) {
+    .edit-profile-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  
+    .profile-avatar {
+      margin-bottom: 10px;
+    }
+  }
+  

@@ -8,6 +8,7 @@ import AccountCreated from  './Components/AccountCreated/AccountCreated';
 
 import ErrorPage from './commons/errorhandling/error-page';
 import HomePage from './Components/HomePage/HomePage';
+import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
 
 class App extends React.Component {
 
@@ -58,6 +59,12 @@ class App extends React.Component {
                             exact
                             path='/home-user-page'
                             render={() => <HomePage />}
+                        />
+
+                        <Route
+                            exact
+                            path='/edit-profile-page'
+                            render={() => <EditProfilePage />}
                         />
 
                         {/*Error*/}
