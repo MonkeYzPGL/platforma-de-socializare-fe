@@ -1,16 +1,16 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
-import SignUpPage from './Components/SignUpPage/SignUpPage';
-import FirstPage from './Components/FirstPage/FirstPage';
-import ResetPassword from './Components/ResetPassword/ResetPassword';
-import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
-import AccountCreated from  './Components/AccountCreated/AccountCreated';
 
-import ErrorPage from './commons/errorhandling/error-page';
+import AccountCreated from  './Components/AccountCreated/AccountCreated';
+import FirstPage from './Components/FirstPage/FirstPage';
 import HomePage from './Components/HomePage/HomePage';
+import NotFoundPage from './Components/NotFoundPage/NotFound';
+import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
+import ResetPassword from './Components/ResetPassword/ResetPassword';
+import SignUpPage from './Components/SignUpPage/SignUpPage';
+
 
 class App extends React.Component {
-
 
     render() {
         return (
@@ -60,14 +60,8 @@ class App extends React.Component {
                             render={() => <HomePage />}
                         />
 
-                        {/*Error*/}
-                        <Route
-                            exact
-                            path='/error'
-                            render={() => <ErrorPage/>}
-                        />
+                        <Route render={() => <NotFoundPage />} />
 
-                        <Route render={() =><ErrorPage/>} />
                     </Switch>
                 </div>
             </Router>
