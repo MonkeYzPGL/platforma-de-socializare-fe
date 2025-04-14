@@ -7,6 +7,7 @@ import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
 import AccountCreated from  './Components/AccountCreated/AccountCreated';
 
 import ErrorPage from './commons/errorhandling/error-page';
+import HomePage from './Components/HomePage/HomePage';
 
 class App extends React.Component {
 
@@ -52,7 +53,13 @@ class App extends React.Component {
                             path='/account-created'
                             render={() => <AccountCreated />}
                         />
-                        
+
+                        <Route
+                            exact
+                            path='/home-user-page'
+                            render={() => <HomePage />}
+                        />
+
                         {/*Error*/}
                         <Route
                             exact
@@ -69,4 +76,4 @@ class App extends React.Component {
     };
 }
 
-export default App
+export default App;
