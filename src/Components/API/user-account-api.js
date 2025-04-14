@@ -27,6 +27,24 @@ function login(username, password, callback) {
     });
 }
 
+function signup(userData, callback) {
+    const request = new Request(HOST.user_api, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData)
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("User created at: " + HOST.user_api);
+        }
+        callback(result, status, error);
+    });
+}
+
 function resetPassword(email, newPassword, callback) {
     const payload = {
         password: newPassword
@@ -52,6 +70,7 @@ function resetPassword(email, newPassword, callback) {
 export {
 
     login,
-    resetPassword,
+    signup,
+    resetPassword
 
 };

@@ -12,6 +12,7 @@ const FirstPage = (props) => {
   const [password, setPassword] = useState('');
   const history = useHistory();
 
+  
   const handleLogin = () => {
     login(username, password, (result, status, error) => {
       if(status === 200)
@@ -21,8 +22,10 @@ const FirstPage = (props) => {
         history.push('');
       } else if (status === 204){
         alert("User not found");
+      } else if (status ===403){
+        alert("Wait for the admin to validate your account!");
       } else {
-        alert("Login error");
+        alert("Error");
       }
     })
   }
@@ -30,8 +33,6 @@ const FirstPage = (props) => {
   const handleSignupClick = () => {
     props.history.push("/signup");
   };
-
-
 
   return (
     <div className="first-page-container">
@@ -58,7 +59,6 @@ const FirstPage = (props) => {
         <div className="divider">Or</div>
         <p className="create-account">Create an account for free</p>
 
-        {/* Buton care face navigarea */}
         <button className="signup-button" onClick={handleSignupClick}>Sign Up</button>
       </div>
     </div>
@@ -66,4 +66,4 @@ const FirstPage = (props) => {
 };
 
 
-export default withRouter(FirstPage);
+export default withRouter(FirstPage); 
