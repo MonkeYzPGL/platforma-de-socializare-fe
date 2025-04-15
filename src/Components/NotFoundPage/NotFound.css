@@ -1,0 +1,28 @@
+.not-found-container {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('/public/poze/cat404.jpg');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: #f0f0f0;
+    position: relative;
+}
+
+.not-found-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 12px 25px;
+    font-size: 18px;
+    background-color: rgba(102, 184, 207, 0.9);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.not-found-button:hover {
+    background-color: rgba(74, 164, 188, 0.9);
+}
