@@ -3,11 +3,11 @@ import "./EditProfilePage.css";
 
 export default function EditProfilePage() {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     username: "",
     email: "",
-    mobile: "",
-    location: ""
+    description: ""
   });
 
   const handleChange = (e) => {
@@ -22,8 +22,8 @@ export default function EditProfilePage() {
     <div className="edit-profile-page">
       <div className="edit-logo" />
       <div className="edit-profile-container">
-      <div className="close-button">×</div>
-      <div className="close-button" onClick={() => window.history.back()}>×</div>
+        <div className="close-button" onClick={() => window.history.back()}>×</div>
+
         <div className="edit-profile-header">
           <div className="profile-avatar" />
           <div className="profile-info">
@@ -36,13 +36,25 @@ export default function EditProfilePage() {
 
         <div className="edit-profile-section">
           <div className="edit-profile-row">
-            <label className="edit-profile-label">Name</label>
+            <label className="edit-profile-label">First Name</label>
             <input
               className="edit-profile-input clean"
-              name="name"
-              value={formData.name}
+              name="firstName"
+              value={formData.firstName}
               onChange={handleChange}
-              placeholder="Popescu"
+              placeholder="First Name"
+            />
+          </div>
+          <div className="edit-profile-divider light" />
+
+          <div className="edit-profile-row">
+            <label className="edit-profile-label">Last Name</label>
+            <input
+              className="edit-profile-input clean"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              placeholder="Last Name"
             />
           </div>
           <div className="edit-profile-divider light" />
@@ -54,7 +66,7 @@ export default function EditProfilePage() {
               name="username"
               value={formData.username}
               onChange={handleChange}
-              placeholder="@popescu"
+              placeholder="@username"
             />
           </div>
           <div className="edit-profile-divider light" />
@@ -72,25 +84,13 @@ export default function EditProfilePage() {
           <div className="edit-profile-divider light" />
 
           <div className="edit-profile-row">
-            <label className="edit-profile-label">Mobile number</label>
+            <label className="edit-profile-label">Description</label>
             <input
               className="edit-profile-input clean"
-              name="mobile"
-              value={formData.mobile}
+              name="description"
+              value={formData.description}
               onChange={handleChange}
-              placeholder="Add number"
-            />
-          </div>
-          <div className="edit-profile-divider light" />
-
-          <div className="edit-profile-row">
-            <label className="edit-profile-label">Location</label>
-            <input
-              className="edit-profile-input clean"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              placeholder="USA"
+              placeholder="Something about yourself..."
             />
           </div>
         </div>
