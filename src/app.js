@@ -2,6 +2,7 @@ import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 import AccountCreated from  './Components/AccountCreated/AccountCreated';
+import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
 import FirstPage from './Components/FirstPage/FirstPage';
 import HomePage from './Components/HomePage/HomePage';
 import NotFoundPage from './Components/NotFoundPage/NotFound';
@@ -10,9 +11,6 @@ import ResetPassword from './Components/ResetPassword/ResetPassword';
 import SignUpPage from './Components/SignUpPage/SignUpPage';
 
 import ErrorPage from './commons/errorhandling/error-page';
-import HomePage from './Components/HomePage/HomePage';
-import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
-
 
 class App extends React.Component {
 
