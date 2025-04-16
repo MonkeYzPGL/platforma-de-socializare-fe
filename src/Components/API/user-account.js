@@ -2,11 +2,12 @@
 //import { RiGitPullRequestFill } from "react-icons/ri";
 import RestApiClient from "./rest-client";
 const HOST = {
-    user_api: "http://localhost:8080/api/v1/userAccount"
+    user_api: "http://socialplatform.ddns.net/api/v1/userAccount"
 }
 
-function login(username, password, callback) {
+function userLogin(username, password, callback) {
     const payload = {
+        username: username,
         password: password
     };
 
@@ -67,10 +68,67 @@ function resetPassword(email, newPassword, callback) {
     });
 }
 
+function getAllUsers(callback) {
+    const request = new Request(HOST.user_api + "/all", {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Fetched all users from: " + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
+function deleteUser(id, callback){
+    const payload = { id: id };
+
+    const request = new Request(HOST.user_api + "/" + id, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    RestApiClient.performRequest(request, (result,status,error) => {
+        if(status === 200){
+            console.log("Delete of the user request sent to:" + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
+function updateUser(userData, callback) {
+    const request = new Request(HOST.user_api + "/" + userData.id, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("User updated at: " + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
+
 export {
 
-    login,
+    userLogin,
     signup,
-    resetPassword
-
+    resetPassword,
+    getAllUsers,
+    deleteUser,
+    updateUser
 };
