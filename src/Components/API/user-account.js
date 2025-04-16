@@ -2,11 +2,12 @@
 //import { RiGitPullRequestFill } from "react-icons/ri";
 import RestApiClient from "./rest-client";
 const HOST = {
-    user_api: "http://localhost:8080/api/v1/userAccount"
+    user_api: "http://socialplatform.ddns.net/api/v1/userAccount"
 }
 
-function login(username, password, callback) {
+function userLogin(username, password, callback) {
     const payload = {
+        username: username,
         password: password
     };
 
@@ -69,7 +70,7 @@ function resetPassword(email, newPassword, callback) {
 
 export {
 
-    login,
+    userLogin,
     signup,
     resetPassword
 
