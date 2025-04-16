@@ -2,11 +2,12 @@
 //import { RiGitPullRequestFill } from "react-icons/ri";
 import RestApiClient from "./rest-client";
 const HOST = {
-    user_api: "http://localhost:8080/api/v1/userAccount"
+    user_api: "http://socialplatform.ddns.net/api/v1/userAccount"
 }
 
-function login(username, password, callback) {
+function userLogin(username, password, callback) {
     const payload = {
+        username: username,
         password: password
     };
 
@@ -67,10 +68,27 @@ function resetPassword(email, newPassword, callback) {
     });
 }
 
+function getAllUsers(callback) {
+    const request = new Request(HOST.user_api + "/all", {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Fetched all users from: " + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
 export {
 
-    login,
+    userLogin,
     signup,
-    resetPassword
+    resetPassword,
+    getAllUsers
 
 };
