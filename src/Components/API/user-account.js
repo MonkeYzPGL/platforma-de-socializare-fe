@@ -40,7 +40,7 @@ function signup(userData, callback) {
 
     RestApiClient.performRequest(request, (result, status, error) => {
         if (status === 200) {
-            console.log("User created at: " + HOST.user_api);
+            console.log("User created at: " + request.url);
         }
         callback(result, status, error);
     });
@@ -121,7 +121,6 @@ function updateUser(userData, callback) {
         callback(result, status, error);
     });
 }
-
 
 export {
 
