@@ -4,7 +4,6 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import {useHistory} from "react-router-dom";
 import { signup } from "../../API/user-account-api";
 
-
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
     firstName: "",

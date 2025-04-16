@@ -5,8 +5,9 @@ const HOST = {
     user_api: "http://socialplatform.ddns.net/api/v1/userAccount"
 }
 
-function login(username, password, callback) {
+function userLogin(username, password, callback) {
     const payload = {
+        username: username,
         password: password
     };
 
@@ -69,7 +70,7 @@ function resetPassword(email, newPassword, callback) {
 
 export {
 
-    login,
+    userLogin,
     signup,
     resetPassword
 

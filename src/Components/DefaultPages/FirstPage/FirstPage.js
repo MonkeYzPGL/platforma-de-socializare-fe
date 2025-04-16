@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import "./FirstPage.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import {login} from '../../API/user-account-api';
+import {userLogin} from '../API/user-account';
+import {adminLogin} from '../API/admin-account';
 import { useHistory } from "react-router-dom";
 
 const FirstPage = (props) => {
@@ -12,24 +13,32 @@ const FirstPage = (props) => {
   const [password, setPassword] = useState('');
   const history = useHistory();
 
-  
   const handleLogin = () => {
-    login(username, password, (result, status, error) => {
-      if(status === 200)
-      {
-        console.log(result);
+    userLogin(username, password, (result, status, error) => {
+      if (status === 200) {
         localStorage.setItem('user', JSON.stringify(result));
-        history.push('');
-      } else if (status === 204){
-        alert("User not found");
-      } else if (status ===403){
-        alert("Wait for the admin to validate your account!");
+        history.push('/user');
+      } else if (status === 204) {
+        adminLogin(username, password, (adminResult, adminStatus, adminError) => {
+          if (adminStatus === 200) {
+            localStorage.setItem('admin', JSON.stringify(adminResult));
+            history.push('/admin');
+          } else if (adminStatus === 204) {
+            alert("Neither user nor admin account found.");
+          } else if (adminStatus === 403) {
+            alert("Wait for the admin to validate your admin account!");
+          } else {
+            alert("Admin login error.");
+          }
+        });
+      } else if (status === 403) {
+        alert("Wait for the admin to validate your user account!");
       } else {
-        alert("Error");
+        alert("User login error.");
       }
-    })
-  }
-
+    });
+  };
+  
   const handleSignupClick = () => {
     props.history.push("/signup");
   };
@@ -65,5 +74,4 @@ const FirstPage = (props) => {
   );
 };
 
-
-export default withRouter(FirstPage); 
+export default withRouter(FirstPage);
