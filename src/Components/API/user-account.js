@@ -84,11 +84,51 @@ function getAllUsers(callback) {
     });
 }
 
+function deleteUser(id, callback){
+    const payload = { id: id };
+
+    const request = new Request(HOST.user_api + "/" + id, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    RestApiClient.performRequest(request, (result,status,error) => {
+        if(status === 200){
+            console.log("Delete of the user request sent to:" + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
+function updateUser(userData, callback) {
+    const request = new Request(HOST.user_api + "/" + userData.id, {
+        method: 'PUT',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(userData)
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("User updated at: " + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
+
 export {
 
     userLogin,
     signup,
     resetPassword,
-    getAllUsers
-
+    getAllUsers,
+    deleteUser,
+    updateUser
 };

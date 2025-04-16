@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Input } from 'reactstrap';
-import { getAllUsers } from '../../API/user-account';
+import { getAllUsers, deleteUser, updateUser } from '../../API/user-account';
+import { validateUser } from '../../API/admin-account';
 import './UserTable.css'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
-const UserTablePage = ({ updateUser, deleteUser }) => {
+const UserTablePage = () => {
     const [allUsers, setAllUsers] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [userData, setUserData] = useState({});
@@ -35,23 +36,51 @@ const UserTablePage = ({ updateUser, deleteUser }) => {
     };
 
     const handleSave = () => {
-        updateUser(userData).then(() => {
-            setEditableUserId(null);
-            getAllUsers((result, status, error) => {
-                if (status === 200 && result) setAllUsers(result);
-            });
-        });
-    };    
-
-    const handleDelete = (id) => {
-        if (window.confirm("Are you sure you want to delete this user?")) {
-            deleteUser(id).then(() => {
+        updateUser(userData, (result, status, error) => {
+            if (status === 200) {
+                setEditableUserId(null);
                 getAllUsers((result, status, error) => {
                     if (status === 200 && result) setAllUsers(result);
                 });
+            } else {
+                console.error("Eroare la actualizare:", error);
+            }
+        });
+    };
+    
+    const handleDelete = (id) => {
+        if (window.confirm("Are you sure you want to delete this user?")) {
+            deleteUser(id, (result, status, error) => {
+                if (status === 200) {
+                    getAllUsers((result, status, error) => {
+                        if (status === 200 && result) {
+                            setAllUsers(result);
+                        }
+                    });
+                } else {
+                    console.error("Error at deleting the user:", error ?? `Status: ${status}`);
+                    getAllUsers((result, status, error) => {
+                        if (status === 200 && result) {
+                            setAllUsers(result);
+                        }
+                    });
+                }
             });
         }
-    };    
+    };
+    
+    const handleValidate = (id) => {
+        validateUser(id, (result, status, error) => {
+            if (status === 200) {
+                getAllUsers((result, status, error) => {
+                    if (status === 200 && result) setAllUsers(result);
+                });
+            } else {
+                console.error("Eroare la validare:", error);
+            }
+        });
+    };
+
 
     const filteredUsers = allUsers.filter(user =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
@@ -175,6 +204,9 @@ const UserTablePage = ({ updateUser, deleteUser }) => {
                                   
                                 ) : (
                                     <>
+                                        <Button color="primary" size="sm" onClick={() => handleValidate(user.id)}>
+                                            <i className="fas fa-check-circle"></i>
+                                        </Button>{' '}
                                         <Button color="warning" size="sm" onClick={() => handleEditClick(user)}>
                                             <i className="fas fa-wrench"></i>
                                         </Button>{' '}

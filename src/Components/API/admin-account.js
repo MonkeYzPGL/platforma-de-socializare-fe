@@ -27,6 +27,25 @@ function adminLogin(username, password, callback) {
     });
 }
 
+function validateUser(userId, callback) {
+    const request = new Request(HOST.admin_api + "/validate/" + userId, {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("User validated at:", request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
+
 export {
     adminLogin,
+    validateUser,
 };
