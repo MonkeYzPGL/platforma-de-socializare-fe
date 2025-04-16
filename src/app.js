@@ -1,14 +1,15 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
-import AccountCreated from  './Components/AccountCreated/AccountCreated';
-import FirstPage from './Components/FirstPage/FirstPage';
-import HomePage from './Components/HomePage/HomePage';
-import NotFoundPage from './Components/NotFoundPage/NotFound';
-import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
-import ResetPassword from './Components/ResetPassword/ResetPassword';
-import SignUpPage from './Components/SignUpPage/SignUpPage';
-
+import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
+import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
+import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
+import HomePage from './Components/DefaultPages/HomePage/HomePage';
+import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
+import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordChanged';
+import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword';
+import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
+import UserTablePage from './Components/AdminPages/UserTable/UserTable';
 
 class App extends React.Component {
 
@@ -58,6 +59,18 @@ class App extends React.Component {
                             exact
                             path='/home-user-page'
                             render={() => <HomePage />}
+                        />
+
+                        <Route
+                            exact
+                            path='/user-table'
+                            render={() => <UserTablePage />}
+                        />
+
+                        <Route
+                            exact
+                            path='/admin-table'
+                            render={() => <AdminTablePage />}
                         />
 
                         <Route render={() => <NotFoundPage />} />
