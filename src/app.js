@@ -8,7 +8,7 @@ import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
 import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordChanged';
 import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword';
 import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
-
+import UserTablePage from './Components/AdminPages/UserTable/UserTable';
 
 class App extends React.Component {
 
@@ -58,6 +58,12 @@ class App extends React.Component {
                             exact
                             path='/home-user-page'
                             render={() => <HomePage />}
+                        />
+
+                        <Route
+                            exact
+                            path='/user-table'
+                            render={() => <UserTablePage />}
                         />
 
                         <Route render={() => <NotFoundPage />} />

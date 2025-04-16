@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Input } from 'reactstrap';
-import './UserTablePage.css'; 
+import { getAllUsers } from '../../API/user-account';
+import './UserTable.css'; 
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const UserTablePage = ({ fetchUsers, updateUser, deleteUser }) => {
+
+const UserTablePage = ({ updateUser, deleteUser }) => {
     const [allUsers, setAllUsers] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [userData, setUserData] = useState({});
     const [searchTerm, setSearchTerm] = useState("");
 
     useEffect(() => {
-        fetchUsers().then(data => setAllUsers(data));
-    }, [fetchUsers]);
+        getAllUsers((result, status, error) => {
+            if (status === 200 && result) {
+                setAllUsers(result);
+            } else {
+                console.error("Eroare la preluarea userilor:", error);
+            }
+        });
+    }, []);    
 
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -28,33 +37,42 @@ const UserTablePage = ({ fetchUsers, updateUser, deleteUser }) => {
     const handleSave = () => {
         updateUser(userData).then(() => {
             setEditableUserId(null);
-            fetchUsers().then(data => setAllUsers(data));
+            getAllUsers((result, status, error) => {
+                if (status === 200 && result) setAllUsers(result);
+            });
         });
-    };
+    };    
 
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             deleteUser(id).then(() => {
-                fetchUsers().then(data => setAllUsers(data));
+                getAllUsers((result, status, error) => {
+                    if (status === 200 && result) setAllUsers(result);
+                });
             });
         }
-    };
+    };    
 
     const filteredUsers = allUsers.filter(user =>
-        user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(searchTerm.toLowerCase())
+        user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
         <div className="user-table-container">
-            <Input
-                type="text"
-                placeholder="Search by name or username..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="search-bar"
-            />
+            <div className="admin-logo"></div>
+
+            <div className="search-wrapper">
+                <i className="fas fa-search search-icon" />
+                <input
+                    type="text"
+                    placeholder="Search by name or username..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="search-bar"
+                />
+            </div>
+
+
             <Table striped responsive>
                 <thead>
                     <tr>
@@ -143,7 +161,7 @@ const UserTablePage = ({ fetchUsers, updateUser, deleteUser }) => {
                                 {editableUserId === user.id ? (
                                     <Input
                                         name="password"
-                                        type="password"
+                                        type="text"
                                         value={userData.password}
                                         onChange={handleInputChange}
                                     />
@@ -151,11 +169,19 @@ const UserTablePage = ({ fetchUsers, updateUser, deleteUser }) => {
                             </td>
                             <td>
                                 {editableUserId === user.id ? (
-                                    <Button color="success" onClick={handleSave}>Save</Button>
+                                    <Button color="success" onClick={handleSave}>
+                                        <i className="fas fa-check"></i>
+                                    </Button>
+                                  
                                 ) : (
                                     <>
-                                        <Button color="warning" size="sm" onClick={() => handleEditClick(user)}>Edit</Button>{' '}
-                                        <Button color="danger" size="sm" onClick={() => handleDelete(user.id)}>Delete</Button>
+                                        <Button color="warning" size="sm" onClick={() => handleEditClick(user)}>
+                                            <i className="fas fa-wrench"></i>
+                                        </Button>{' '}
+                                        <Button color="danger" size="sm" onClick={() => handleDelete(user.id)}>
+                                            <i className="fas fa-times"></i>
+                                        </Button>
+
                                     </>
                                 )}
                             </td>

@@ -68,10 +68,27 @@ function resetPassword(email, newPassword, callback) {
     });
 }
 
+function getAllUsers(callback) {
+    const request = new Request(HOST.user_api + "/all", {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Fetched all users from: " + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
 export {
 
     userLogin,
     signup,
-    resetPassword
+    resetPassword,
+    getAllUsers
 
 };
