@@ -2,6 +2,7 @@ import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
+import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
 import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
 import HomePage from './Components/DefaultPages/HomePage/HomePage';
 import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
@@ -64,6 +65,12 @@ class App extends React.Component {
                             exact
                             path='/user-table'
                             render={() => <UserTablePage />}
+                        />
+
+                        <Route
+                            exat
+                            path='/edit-profile-page'
+                            render={() => <EditProfilePage />}
                         />
 
                         <Route render={() => <NotFoundPage />} />
