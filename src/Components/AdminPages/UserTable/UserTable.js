@@ -48,7 +48,7 @@ const UserTablePage = () => {
             }
         });
     };
-    
+
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             deleteUser(id, (result, status, error) => {
@@ -69,7 +69,7 @@ const UserTablePage = () => {
             });
         }
     };
-    
+
     const handleValidate = (id) => {
         validateUser(id, (result, status, error) => {
             if (status === 200) {
@@ -208,7 +208,7 @@ const UserTablePage = () => {
                                     <Button color="success" onClick={handleSave}>
                                         <i className="fas fa-check"></i>
                                     </Button>
-                                  
+
                                 ) : (
                                     <>
                                         <Button color="primary" size="sm" onClick={() => handleValidate(user.id)}>
