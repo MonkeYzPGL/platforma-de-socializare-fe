@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./ResetPassword.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useHistory } from "react-router-dom";
-import {resetPassword} from '../API/user-account';
+import {resetPassword} from '../../API/user-account';
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");

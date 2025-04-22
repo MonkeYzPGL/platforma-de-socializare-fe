@@ -2,12 +2,14 @@ import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 import AccountCreated from  './Components/AccountCreated/AccountCreated';
+import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
 import FirstPage from './Components/FirstPage/FirstPage';
 import HomePage from './Components/HomePage/HomePage';
 import NotFoundPage from './Components/NotFoundPage/NotFound';
 import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
 import ResetPassword from './Components/ResetPassword/ResetPassword';
 import SignUpPage from './Components/SignUpPage/SignUpPage';
+import ErrorPage from './commons/errorhandling/error-page';
 
 
 class App extends React.Component {
@@ -60,7 +62,19 @@ class App extends React.Component {
                             render={() => <HomePage />}
                         />
 
-                        <Route render={() => <NotFoundPage />} />
+                        <Route
+                            exact
+                            path='/edit-profile-page'
+                            render={() => <EditProfilePage />}
+                        />
+
+                        {/*Error*/}
+                        <Route
+                            exact
+                            path='/error'
+                            render={() => <ErrorPage/>}
+                        />
+
 
                     </Switch>
                 </div>

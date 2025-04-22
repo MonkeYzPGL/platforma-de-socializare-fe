@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { withRouter } from "react-router-dom";
 import "./FirstPage.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import {userLogin} from '../API/user-account';
-import {adminLogin} from '../API/admin-account';
+import {userLogin} from '../../API/user-account';
+import {adminLogin} from '../../API/admin-account';
 import { useHistory } from "react-router-dom";
 
 const FirstPage = (props) => {
@@ -22,7 +22,7 @@ const FirstPage = (props) => {
         adminLogin(username, password, (adminResult, adminStatus, adminError) => {
           if (adminStatus === 200) {
             localStorage.setItem('admin', JSON.stringify(adminResult));
-            history.push('/admin');
+            history.push('/user-table');
           } else if (adminStatus === 204) {
             alert("Neither user nor admin account found.");
           } else if (adminStatus === 403) {

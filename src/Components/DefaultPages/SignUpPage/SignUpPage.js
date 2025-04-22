@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./SignUpPage.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import {useHistory} from "react-router-dom";
-import { signup } from "../API/user-account";
-
+import { signup } from "../../API/user-account";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
