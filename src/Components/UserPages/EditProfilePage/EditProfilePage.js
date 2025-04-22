@@ -1,14 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./EditProfilePage.css";
+import { updateUser } from "../../API/user-account";
 
 export default function EditProfilePage() {
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    username: "",
-    email: "",
-    description: ""
-  });
+  const [formData, setFormData] = useState(null);
+
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setFormData(storedUser);
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -17,6 +19,24 @@ export default function EditProfilePage() {
       [name]: value
     }));
   };
+
+  const handleSave = () => {
+    if (!formData) return;
+
+    updateUser(formData, (result, status, error) => {
+      if (status === 200) {
+        localStorage.setItem("user", JSON.stringify(result));
+        alert("Profile updated successfully!");
+        window.history.back();
+      } else {
+        alert("Error while updating profile.");
+        console.error(error);
+      }
+    });
+  };
+
+
+  if (!formData) return null;
 
   return (
     <div className="edit-profile-page">
@@ -27,8 +47,8 @@ export default function EditProfilePage() {
         <div className="edit-profile-header">
           <div className="profile-avatar" />
           <div className="profile-info">
-            <div className="name">Your name</div>
-            <div className="email">yourname@gmail.com</div>
+            <div className="name">{`${formData.firstName} ${formData.lastName}`}</div>
+            <div className="email">{formData.email}</div>
           </div>
         </div>
 
@@ -88,7 +108,7 @@ export default function EditProfilePage() {
             <input
               className="edit-profile-input clean"
               name="description"
-              value={formData.description}
+              value={formData.description || ""}
               onChange={handleChange}
               placeholder="Something about yourself..."
             />
@@ -96,9 +116,10 @@ export default function EditProfilePage() {
         </div>
 
         <div className="edit-profile-actions">
-          <button className="save-button">Save Change</button>
+          <button className="save-button" onClick={handleSave}>Save Change</button>
         </div>
       </div>
     </div>
   );
 }
+
