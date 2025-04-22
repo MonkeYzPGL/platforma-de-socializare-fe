@@ -1,16 +1,16 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
-import AccountCreated from  './Components/AccountCreated/AccountCreated';
-import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
-import FirstPage from './Components/FirstPage/FirstPage';
-import HomePage from './Components/HomePage/HomePage';
-import NotFoundPage from './Components/NotFoundPage/NotFound';
-import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
-import ResetPassword from './Components/ResetPassword/ResetPassword';
-import SignUpPage from './Components/SignUpPage/SignUpPage';
-import ErrorPage from './commons/errorhandling/error-page';
-
+import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
+import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
+import EditProfilePage from './Components/UserPages/EditProfilePage/EditProfilePage';
+import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
+import HomePage from './Components/UserPages/HomePage/HomePage';
+import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
+import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordChanged';
+import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword';
+import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
+import UserTablePage from './Components/AdminPages/UserTable/UserTable';
 
 class App extends React.Component {
 
@@ -21,39 +21,28 @@ class App extends React.Component {
                 <div>
                     {/* <NavigationBar /> */}
                     <Switch>
-
-                        {/*Prima pagina*/}
-                        <Route
-                            exact
-                            path='/'
-                            render={() => <FirstPage/>}
-                        />
-
-                        {/*Sign Up*/}
-                        <Route
-                            exact
-                            path='/signup'
-                            render={() => <SignUpPage/>}
-                        />
-
-                        
-                        {/*Reset Password*/}
-                        <Route
-                            exact
-                            path='/reset-password'
-                            render={() => <ResetPassword />}
-                        />
-                        
-                        <Route
-                            exact
-                            path='/password-changed'
-                            render={() => <PasswordChanged />}
-                        />
-                        
                         <Route
                             exact
                             path='/account-created'
                             render={() => <AccountCreated />}
+                        />
+
+                        <Route
+                            exact
+                            path='/admin-table'
+                            render={() => <AdminTablePage />}
+                        /> 
+                        
+                        <Route
+                            exact
+                            path='/edit-profile-page'
+                            render={() => <EditProfilePage />}
+                        />
+
+                        <Route
+                            exact
+                            path='/'
+                            render={() => <FirstPage/>}
                         />
 
                         <Route
@@ -64,17 +53,29 @@ class App extends React.Component {
 
                         <Route
                             exact
-                            path='/edit-profile-page'
-                            render={() => <EditProfilePage />}
+                            path='/password-changed'
+                            render={() => <PasswordChanged />}
                         />
 
-                        {/*Error*/}
                         <Route
                             exact
-                            path='/error'
-                            render={() => <ErrorPage/>}
+                            path='/reset-password'
+                            render={() => <ResetPassword />}
                         />
 
+                        <Route
+                            exact
+                            path='/signup'
+                            render={() => <SignUpPage/>}
+                        />
+
+                        <Route
+                            exact
+                            path='/user-table'
+                            render={() => <UserTablePage />}
+                        />
+
+                        <Route render={() => <NotFoundPage />} />
 
                     </Switch>
                 </div>
