@@ -1,6 +1,8 @@
 import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
+import PrivateRoute from './PrivateRoute';
+
 import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
 import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
 import EditProfilePage from './Components/UserPages/EditProfilePage/EditProfilePage';
@@ -19,65 +21,22 @@ class App extends React.Component {
             <div>
             <Router>
                 <div>
-                    {/* <NavigationBar /> */}
+
                     <Switch>
-                        <Route
-                            exact
-                            path='/account-created'
-                            render={() => <AccountCreated />}
-                        />
+                        <Route exact path='/' render={() => <FirstPage />} />
+                        <Route exact path='/signup' render={() => <SignUpPage />} />
+                        <Route exact path='/reset-password' render={() => <ResetPassword />} />
+                        <Route exact path='/password-changed' render={() => <PasswordChanged />} />
+                        <Route exact path='/account-created' render={() => <AccountCreated />} />
 
-                        <Route
-                            exact
-                            path='/admin-table'
-                            render={() => <AdminTablePage />}
-                        /> 
-                        
-                        <Route
-                            exact
-                            path='/edit-profile'
-                            render={() => <EditProfilePage />}
-                        />
-
-                        <Route
-                            exact
-                            path='/'
-                            render={() => <FirstPage/>}
-                        />
-
-                        <Route
-                            exact
-                            path='/home-user'
-                            render={() => <HomePage />}
-                        />
-
-                        <Route
-                            exact
-                            path='/password-changed'
-                            render={() => <PasswordChanged />}
-                        />
-
-                        <Route
-                            exact
-                            path='/reset-password'
-                            render={() => <ResetPassword />}
-                        />
-
-                        <Route
-                            exact
-                            path='/signup'
-                            render={() => <SignUpPage/>}
-                        />
-
-                        <Route
-                            exact
-                            path='/user-table'
-                            render={() => <UserTablePage />}
-                        />
+                        <PrivateRoute exact path='/home-user' component={HomePage} requiredRole="user" />
+                        <PrivateRoute exact path='/edit-profile' component={EditProfilePage} requiredRole="user" />
+                        <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
+                        <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />
 
                         <Route render={() => <NotFoundPage />} />
-
                     </Switch>
+
                 </div>
             </Router>
             </div>

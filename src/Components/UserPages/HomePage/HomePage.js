@@ -21,6 +21,12 @@ export default function HomePage() {
     history.push("/edit-profile");
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);                    
+    history.push("/");               
+  };
+
   return (
     <div className="homepage-container">
       <div className="homepage-profile-header">
@@ -31,7 +37,7 @@ export default function HomePage() {
             <div className="homepage-profile-pic">
               <span className="homepage-edit-icon"></span>
             </div>
-            
+
             <div className="homepage-profile-text">
               <h1 className="homepage-name">
                 {user ? `${user.firstName} ${user.lastName}` : "Your name"}
@@ -57,7 +63,7 @@ export default function HomePage() {
             <button className="homepage-button homepage-add-friend">Add New Friends</button>
             <button className="homepage-button homepage-edit-profile" onClick={handleEditPageClick}>Edit Profile</button>
             <button className="homepage-button homepage-add-photo">Add Photo</button>
-            <button className="homepage-button homepage-logout">Log Out</button>
+            <button className="homepage-button homepage-logout" onClick={handleLogout}>Log Out</button>
           </div>
         </div>
       </div>
