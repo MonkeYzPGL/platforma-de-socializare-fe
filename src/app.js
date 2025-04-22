@@ -5,13 +5,13 @@ import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCre
 import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
 import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
 import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
+
 import HomePage from './Components/DefaultPages/HomePage/HomePage';
 import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
 import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordChanged';
 import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword';
 import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
 import UserTablePage from './Components/AdminPages/UserTable/UserTable';
-
 
 class App extends React.Component {
 
