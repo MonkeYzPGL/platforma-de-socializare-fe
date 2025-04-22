@@ -9,8 +9,8 @@ import NotFoundPage from './Components/NotFoundPage/NotFound';
 import PasswordChanged from './Components/PasswordChanged/PasswordChanged';
 import ResetPassword from './Components/ResetPassword/ResetPassword';
 import SignUpPage from './Components/SignUpPage/SignUpPage';
-
 import ErrorPage from './commons/errorhandling/error-page';
+
 
 class App extends React.Component {
 
@@ -74,6 +74,7 @@ class App extends React.Component {
                             path='/error'
                             render={() => <ErrorPage/>}
                         />
+
 
                     </Switch>
                 </div>
