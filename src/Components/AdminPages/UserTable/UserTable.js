@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Input } from 'reactstrap';
 import { getAllUsers, deleteUser, updateUser } from '../../API/user-account';
 import { validateUser } from '../../API/admin-account';
+import { useHistory } from "react-router-dom";
 import './UserTable.css'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
-
 
 const UserTablePage = () => {
     const [allUsers, setAllUsers] = useState([]);
     const [editableUserId, setEditableUserId] = useState(null);
     const [userData, setUserData] = useState({});
     const [searchTerm, setSearchTerm] = useState("");
+    const history = useHistory();
 
     useEffect(() => {
         getAllUsers((result, status, error) => {
@@ -47,7 +48,7 @@ const UserTablePage = () => {
             }
         });
     };
-    
+
     const handleDelete = (id) => {
         if (window.confirm("Are you sure you want to delete this user?")) {
             deleteUser(id, (result, status, error) => {
@@ -68,7 +69,7 @@ const UserTablePage = () => {
             });
         }
     };
-    
+
     const handleValidate = (id) => {
         validateUser(id, (result, status, error) => {
             if (status === 200) {
@@ -81,7 +82,6 @@ const UserTablePage = () => {
         });
     };
 
-
     const filteredUsers = allUsers.filter(user =>
         user.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -89,6 +89,14 @@ const UserTablePage = () => {
     return (
         <div className="user-table-container">
             <div className="admin-logo"></div>
+
+            <Button 
+                color="info" 
+                onClick={() => history.push('/admin-table')} 
+                style={{ marginBottom: '1.5rem' }}
+            >
+                Admin Table
+            </Button>
 
             <div className="search-wrapper">
                 <i className="fas fa-search search-icon" />
@@ -100,7 +108,6 @@ const UserTablePage = () => {
                     className="search-bar"
                 />
             </div>
-
 
             <Table striped responsive>
                 <thead>
@@ -201,7 +208,7 @@ const UserTablePage = () => {
                                     <Button color="success" onClick={handleSave}>
                                         <i className="fas fa-check"></i>
                                     </Button>
-                                  
+
                                 ) : (
                                     <>
                                         <Button color="primary" size="sm" onClick={() => handleValidate(user.id)}>

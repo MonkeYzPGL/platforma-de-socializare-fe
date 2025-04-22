@@ -2,13 +2,16 @@ import React from 'react'
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 
 import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
+import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
 import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
+import EditProfilePage from './Components/EditProfilePage/EditProfilePage';
 import HomePage from './Components/DefaultPages/HomePage/HomePage';
 import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
 import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordChanged';
 import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword';
 import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
 import UserTablePage from './Components/AdminPages/UserTable/UserTable';
+
 
 class App extends React.Component {
 
@@ -65,7 +68,19 @@ class App extends React.Component {
                             path='/user-table'
                             render={() => <UserTablePage />}
                         />
+              
+                        <Route
+                            exact
+                            path='/edit-profile-page'
+                            render={() => <EditProfilePage />}
+                        />
 
+                        <Route
+                            exact
+                            path='/admin-table'
+                            render={() => <AdminTablePage />}
+                        />
+                                
                         <Route render={() => <NotFoundPage />} />
 
                     </Switch>
