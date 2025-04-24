@@ -21,7 +21,6 @@ class App extends React.Component {
             <div>
             <Router>
                 <div>
-
                     <Switch>
                         <Route exact path='/' render={() => <FirstPage />} />
                         <Route exact path='/signup' render={() => <SignUpPage />} />

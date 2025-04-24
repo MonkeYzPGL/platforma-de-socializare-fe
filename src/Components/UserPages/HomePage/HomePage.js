@@ -26,7 +26,6 @@ export default function HomePage() {
     setUser(null);                    
     history.push("/");               
   };
-
   return (
     <div className="homepage-container">
       <div className="homepage-profile-header">
@@ -37,7 +36,6 @@ export default function HomePage() {
             <div className="homepage-profile-pic">
               <span className="homepage-edit-icon"></span>
             </div>
-
             <div className="homepage-profile-text">
               <h1 className="homepage-name">
                 {user ? `${user.firstName} ${user.lastName}` : "Your name"}
