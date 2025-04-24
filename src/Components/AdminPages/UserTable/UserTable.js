@@ -23,6 +23,11 @@ const UserTablePage = () => {
         });
     }, []);    
 
+    const handleLogout = () => {
+        localStorage.removeItem("admin");  
+        history.push("/");                 
+      };      
+
     const handleInputChange = (e) => {
         const { name, value, type, checked } = e.target;
         setUserData(prev => ({
@@ -90,13 +95,23 @@ const UserTablePage = () => {
         <div className="user-table-container">
             <div className="admin-logo"></div>
 
-            <Button 
-                color="info" 
-                onClick={() => history.push('/admin-table')} 
-                style={{ marginBottom: '1.5rem' }}
-            >
-                Admin Table
-            </Button>
+            <div className="admin-buttons">
+                <Button 
+                    color="info" 
+                    onClick={() => history.push('/admin-table')} 
+                    style={{ marginRight: '1rem' }}
+                >
+                    Admin Table
+                </Button>
+                <button 
+                    className="logout-icon-button"
+                    onClick={handleLogout}
+                    title="Log Out"
+                >
+                    <i className="fas fa-sign-out-alt"></i>
+                </button>
+
+            </div>
 
             <div className="search-wrapper">
                 <i className="fas fa-search search-icon" />

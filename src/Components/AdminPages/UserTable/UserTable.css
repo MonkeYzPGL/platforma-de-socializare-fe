@@ -82,3 +82,46 @@
     color: white;
   }
   
+  .admin-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .logout-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  
+  .logout-button:hover {
+    background-color: #c82333;
+    cursor: pointer;
+  }
+  
+  .logout-icon-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    font-size: 1.2rem;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .logout-icon-button:hover {
+    background-color: #c82333;
+    cursor: pointer;
+  }
+  
+  
