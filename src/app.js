@@ -35,7 +35,7 @@ class App extends React.Component {
                         
                         <Route
                             exact
-                            path='/edit-profile-page'
+                            path='/edit-profile'
                             render={() => <EditProfilePage />}
                         />
 
@@ -47,7 +47,7 @@ class App extends React.Component {
 
                         <Route
                             exact
-                            path='/home-user-page'
+                            path='/home-user'
                             render={() => <HomePage />}
                         />
 

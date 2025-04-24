@@ -17,7 +17,7 @@ const FirstPage = (props) => {
     userLogin(username, password, (result, status, error) => {
       if (status === 200) {
         localStorage.setItem('user', JSON.stringify(result));
-        history.push('/user');
+        history.push('/home-user');
       } else if (status === 204) {
         adminLogin(username, password, (adminResult, adminStatus, adminError) => {
           if (adminStatus === 200) {
