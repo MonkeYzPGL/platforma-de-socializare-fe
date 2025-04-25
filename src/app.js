@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Route, Switch} from 'react-router-dom'
 import PrivateRoute from './PrivateRoute';
 
 import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
+import AddFriendPage from './Components/UserPages/AddFriendsPage/AddFriends';
 import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
 import EditProfilePage from './Components/UserPages/EditProfilePage/EditProfilePage';
 import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
@@ -13,6 +14,7 @@ import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordC
 import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword';
 import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
 import UserTablePage from './Components/AdminPages/UserTable/UserTable';
+import ViewProfilePage from './Components/UserPages/ViewProfilePage/ViewProfile';
 
 class App extends React.Component {
 
@@ -27,12 +29,14 @@ class App extends React.Component {
                         <Route exact path='/reset-password' render={() => <ResetPassword />} />
                         <Route exact path='/password-changed' render={() => <PasswordChanged />} />
                         <Route exact path='/account-created' render={() => <AccountCreated />} />
+                        <Route exact path='/view-profile/:id' render={() => <ViewProfilePage />}/>
 
                         <PrivateRoute exact path='/home-user' component={HomePage} requiredRole="user" />
                         <PrivateRoute exact path='/edit-profile' component={EditProfilePage} requiredRole="user" />
+                        <PrivateRoute exact path='/add-friends' component={AddFriendPage} requiredRole="user" />
+
                         <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />
-
                         <Route render={() => <NotFoundPage />} />
                     </Switch>
 

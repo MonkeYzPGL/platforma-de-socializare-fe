@@ -26,6 +26,11 @@ export default function HomePage() {
     setUser(null);                    
     history.push("/");               
   };
+
+  const handleAddFriendsClick = () => {
+    history.push("/add-friends");
+  }
+
   return (
     <div className="homepage-container">
       <div className="homepage-profile-header">
@@ -58,7 +63,7 @@ export default function HomePage() {
             <button className="homepage-button homepage-friend-list">
               Friend List <span>23</span>
             </button>
-            <button className="homepage-button homepage-add-friend">Add New Friends</button>
+            <button className="homepage-button homepage-add-friend" onClick={handleAddFriendsClick}>Add New Friends</button>
             <button className="homepage-button homepage-edit-profile" onClick={handleEditPageClick}>Edit Profile</button>
             <button className="homepage-button homepage-add-photo">Add Photo</button>
             <button className="homepage-button homepage-logout" onClick={handleLogout}>Log Out</button>
