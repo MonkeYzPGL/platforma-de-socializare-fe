@@ -122,6 +122,22 @@ function updateUser(userData, callback) {
     });
 }
 
+function getUserById(id, callback) {
+    const request = new Request(HOST.user_api + "/" + id, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+  
+    RestApiClient.performRequest(request, (result, status, error) => {
+      if (status === 200) {
+        console.log("Fetched user by id from: " + request.url);
+      }
+      callback(result, status, error);
+    });
+  }
+
 export {
 
     userLogin,
@@ -129,5 +145,6 @@ export {
     resetPassword,
     getAllUsers,
     deleteUser,
-    updateUser
+    updateUser,
+    getUserById
 };
