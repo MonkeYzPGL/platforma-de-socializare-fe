@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { getAllUsers } from "../../API/user-account";
-import { getFriendList } from "../../API/neo-friend";
+import { getAllUsers, getUserById } from "../../API/user-account";
+
+import { getFriendList, getSuggestedFriends } from "../../API/neo-friend";
 import { sendFriendRequest } from '../../API/friend-request';
 import { useHistory } from "react-router-dom";
 import "./AddFriends.css";
@@ -14,22 +15,34 @@ export default function AddFriendPage() {
     const loadSuggestedUsers = useCallback(() => {
         if (!loggedUser) return;
       
-        getAllUsers((allUsers, userStatus) => {
-          if (userStatus === 200) {
-            getFriendList(loggedUser.id, (friendData, friendStatus) => {
-              if (friendStatus === 200 && Array.isArray(friendData)) {
-                const friendIds = friendData.map(friend => Number(friend.id));
-                const filtered = allUsers.filter(
-                  u => Number(u.id) !== Number(loggedUser.id) && !friendIds.includes(Number(u.id))
-                );
-                setSuggestedUsers(filtered);
-              } else {
-                console.error("Friend list fetch error");
-              }
-            });
+        getSuggestedFriends(loggedUser.id, async (suggestions, status, error) => {
+          if (status === 200 && Array.isArray(suggestions)) {
+            try {
+              const detailedUsers = await Promise.all(
+                suggestions.map(suggestion =>
+                  new Promise((resolve) => {
+                    getUserById(suggestion.id, (result, status) => {
+                      if (status === 200) {
+                        resolve(result);
+                      } else {
+                        console.error("Failed to fetch user details for id:", suggestion.id);
+                        resolve(null);
+                      }
+                    });
+                  })
+                )
+              );
+              const validUsers = detailedUsers.filter(user => user !== null);
+              setSuggestedUsers(validUsers);
+      
+            } catch (err) {
+              console.error("Error loading full user details", err);
+            }
+          } else {
+            console.error("Failed to fetch suggested friends", error);
           }
         });
-      }, [loggedUser]);           
+      }, [loggedUser]);          
   
     useEffect(() => {
         loadSuggestedUsers();
