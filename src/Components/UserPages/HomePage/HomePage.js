@@ -2,18 +2,29 @@ import React from "react";
 import "./HomePage.css";
 import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { getFriendList } from "../../API/neo-friend";
 
 export default function HomePage() {
 
   const [user, setUser] = useState(null);
+  const [friends, setFriends] = useState([]);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
+
     if (storedUser) {
       setUser(storedUser);
-    }
-  }, []);
 
+      getFriendList(storedUser.id, (result, status, error) => {
+        if (status === 200 && result) {
+          setFriends(result);
+        } else {
+          console.error('Failed to fetch friends list:', error);
+        }
+      });
+    }
+
+  }, []);
 
   const history = useHistory();
 
@@ -70,7 +81,7 @@ export default function HomePage() {
 
           <div className="homepage-profile-buttons">
           <button className="homepage-button homepage-friend-list" onClick={handleFriendListClick}>
-              Friend List <span>23</span>
+              Friend List <span>{friends.length}</span>
             </button>
 
             <button className="homepage-button homepage-add-friend" onClick={handleAddFriendsClick}>Add New Friends</button>
