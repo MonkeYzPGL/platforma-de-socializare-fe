@@ -42,25 +42,26 @@ export default function PendingRequests() {
 
   const handleAccept = (senderId) => {
     acceptFriendRequest(senderId, loggedUser.id, (result, status, error) => {
-      if (status === 201) {
-        setPendingUsers(prev => prev.filter(user => user.id !== senderId)); // animăm scoaterea
+      if (status >= 200 && status < 300) {  
+        setPendingUsers(prev => prev.filter(user => user.id !== senderId));
       } else {
         alert("Failed to accept request.");
         console.error(error);
       }
     });
   };
-
+  
   const handleReject = (senderId) => {
     rejectFriendRequest(senderId, loggedUser.id, (result, status, error) => {
-      if (status === 200) {
-        setPendingUsers(prev => prev.filter(user => user.id !== senderId)); // animăm scoaterea
+      if (status >= 200 && status < 300) { 
+        setPendingUsers(prev => prev.filter(user => user.id !== senderId));
       } else {
         alert("Failed to reject request.");
         console.error(error);
       }
     });
   };
+  
 
   const filteredUsers = pendingUsers.filter(user => {
     const username = user?.username?.toLowerCase() || "";

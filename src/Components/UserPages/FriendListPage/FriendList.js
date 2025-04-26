@@ -46,14 +46,15 @@ export default function FriendList() {
 
   const handleRemoveFriend = (friendId) => {
     deleteFriendship(loggedUser.id, friendId, (result, status, error) => {
-      if (status === 200) {
-        setFriends(prev => prev.filter(friend => friend.id !== friendId)); // animăm scoaterea
+      if (status >= 200 && status < 300) {
+        setFriends(prev => prev.filter(friend => friend.id !== friendId)); 
       } else {
         alert("Failed to remove friend.");
         console.error(error);
       }
     });
   };
+  
 
   const filteredFriends = friends.filter(friend => {
     const username = friend?.username?.toLowerCase() || "";
