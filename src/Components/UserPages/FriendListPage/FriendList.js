@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getFriendList, deleteFriendship } from "../../API/neo-friend";
 import { getUserById } from "../../API/user-account"; 
+
 import { useHistory } from "react-router-dom";
 import "./FriendList.css";
 
@@ -14,6 +15,7 @@ export default function FriendList() {
   const loadFriends = useCallback(() => {
     if (!loggedUser) return;
     setIsLoading(true); // start loading
+
 
     getFriendList(loggedUser.id, async (friendData, friendStatus) => {
       if (friendStatus === 200 && Array.isArray(friendData)) {
@@ -36,6 +38,7 @@ export default function FriendList() {
       } else {
         console.error("Failed to load friends");
       }
+
       setIsLoading(false); // end loading
     });
   }, [loggedUser]);
@@ -48,13 +51,14 @@ export default function FriendList() {
     deleteFriendship(loggedUser.id, friendId, (result, status, error) => {
       if (status >= 200 && status < 300) {
         setFriends(prev => prev.filter(friend => friend.id !== friendId)); 
+
       } else {
         alert("Failed to remove friend.");
         console.error(error);
       }
     });
   };
-  
+
 
   const filteredFriends = friends.filter(friend => {
     const username = friend?.username?.toLowerCase() || "";
