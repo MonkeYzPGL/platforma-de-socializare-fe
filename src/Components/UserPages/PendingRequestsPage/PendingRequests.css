@@ -1,4 +1,4 @@
-.friend-list-page {
+.pending-requests-page {
     background: linear-gradient(193deg, rgba(79, 249, 187, 0.69), rgba(13, 80, 195, 0.69), rgba(29, 102, 110, 0.69));
     min-height: 100vh;
     padding: 2vh;
@@ -52,8 +52,8 @@
 .avatar {
     width: 70px;
     height: 70px;
-    background: #D9D9D9;
     border-radius: 50%;
+    object-fit: cover;
     flex-shrink: 0;
 }
 
@@ -90,7 +90,18 @@
     font-weight: 600;
 }
 
-.btn-remove {
+.btn-accept {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.4rem 1rem;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-decline {
     background-color: #FF6B6B;
     color: white;
     border: none;
@@ -114,6 +125,7 @@
     }
 }
 
+
 .spinner {
     width: 50px;
     height: 50px;
@@ -129,7 +141,7 @@
     100% { transform: rotate(360deg); }
   }
   
-  /* Fade-out animat */
+  /* Animație pentru dispariție smooth */
   .friend-card {
     display: flex;
     align-items: center;
