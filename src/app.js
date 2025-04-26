@@ -12,6 +12,7 @@ import FriendList from './Components/UserPages/FriendListPage/FriendList';
 import HomePage from './Components/UserPages/HomePage/HomePage';
 import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
 import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordChanged';
+import PendingRequests from './Components/UserPages/PendingRequestsPage/PendingRequests';
 import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword';
 import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
 import UserTablePage from './Components/AdminPages/UserTable/UserTable';
@@ -36,6 +37,7 @@ class App extends React.Component {
                         <PrivateRoute exact path='/edit-profile' component={EditProfilePage} requiredRole="user" />
                         <PrivateRoute exact path='/add-friends' component={AddFriendPage} requiredRole="user" />
                         <PrivateRoute exact path='/friend-list' component={FriendList} requiredRole="user" />
+                        <Route exact path="/pending-requests" render={() => <PendingRequests />} />
 
                         <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />
