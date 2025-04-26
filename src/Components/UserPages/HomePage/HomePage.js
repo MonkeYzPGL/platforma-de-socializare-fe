@@ -31,6 +31,15 @@ export default function HomePage() {
     history.push("/add-friends");
   }
 
+  const handleFriendListClick = () => {
+    history.push("/friend-list");
+  };  
+
+  const handlePendingRequestsClick = () => {
+    history.push("/pending-requests");
+  };
+  
+
   return (
     <div className="homepage-container">
       <div className="homepage-profile-header">
@@ -60,10 +69,13 @@ export default function HomePage() {
           <div className="homepage-divider" />
 
           <div className="homepage-profile-buttons">
-            <button className="homepage-button homepage-friend-list">
+          <button className="homepage-button homepage-friend-list" onClick={handleFriendListClick}>
               Friend List <span>23</span>
             </button>
+
             <button className="homepage-button homepage-add-friend" onClick={handleAddFriendsClick}>Add New Friends</button>
+            <button className="homepage-button homepage-pending-requests" onClick={handlePendingRequestsClick}> Pending Requests </button>
+
             <button className="homepage-button homepage-edit-profile" onClick={handleEditPageClick}>Edit Profile</button>
             <button className="homepage-button homepage-add-photo">Add Photo</button>
             <button className="homepage-button homepage-logout" onClick={handleLogout}>Log Out</button>

@@ -8,6 +8,7 @@ import AddFriendPage from './Components/UserPages/AddFriendsPage/AddFriends';
 import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
 import EditProfilePage from './Components/UserPages/EditProfilePage/EditProfilePage';
 import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
+import FriendList from './Components/UserPages/FriendListPage/FriendList';
 import HomePage from './Components/UserPages/HomePage/HomePage';
 import NotFoundPage from './Components/DefaultPages/NotFoundPage/NotFound';
 import PasswordChanged from './Components/DefaultPages/PasswordChanged/PasswordChanged';
@@ -34,6 +35,7 @@ class App extends React.Component {
                         <PrivateRoute exact path='/home-user' component={HomePage} requiredRole="user" />
                         <PrivateRoute exact path='/edit-profile' component={EditProfilePage} requiredRole="user" />
                         <PrivateRoute exact path='/add-friends' component={AddFriendPage} requiredRole="user" />
+                        <PrivateRoute exact path='/friend-list' component={FriendList} requiredRole="user" />
 
                         <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />

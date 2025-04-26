@@ -135,6 +135,10 @@
     margin-left: 10px;
     font-weight: bold;
   }
+
+  .homepage-pending-requests {
+    background-color: #5dc9f0;
+  }
   
   .homepage-edit-profile {
     background-color: #5dc9f0;
