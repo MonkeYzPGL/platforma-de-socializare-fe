@@ -36,6 +36,22 @@ function getSuggestedFriends(userId, callback) {
   });
 }
 
+function getMutualFriendsNr(userId1, userId2, callback) {
+  const request = new Request(`${HOST.friend_api}/nrMutualFriends/${userId1}/${userId2}`, {
+    method: 'GET',
+    headers: {
+      'Accept': 'application/json',
+    }
+  });
+
+  RestApiClient.performRequest(request, (result, status, error) => {
+    if (status === 200) {
+      console.log("Number of mutual friends fetched from:", request.url);
+    }
+    callback(result, status, error);
+  });
+}
+
 function deleteFriendship(userId1, userId2, callback) {
   const request = new Request(`${HOST.friend_api}/${userId1}/${userId2}`, {
     method: 'DELETE',
@@ -55,5 +71,6 @@ function deleteFriendship(userId1, userId2, callback) {
 export { 
   getFriendList,
   getSuggestedFriends,
-  deleteFriendship
+  deleteFriendship,
+  getMutualFriendsNr
 };

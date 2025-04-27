@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { getAllUsers, getUserById } from "../../API/user-account";
+import { getUserById } from "../../API/user-account";
 
-import { getFriendList, getSuggestedFriends } from "../../API/neo-friend";
+import { getSuggestedFriends, getMutualFriendsNr } from "../../API/neo-friend";
 import { sendFriendRequest } from '../../API/friend-request';
 import { useHistory } from "react-router-dom";
 import "./AddFriends.css";
@@ -23,7 +23,20 @@ export default function AddFriendPage() {
                   new Promise((resolve) => {
                     getUserById(suggestion.id, (result, status) => {
                       if (status === 200) {
-                        resolve(result);
+                        getMutualFriendsNr(loggedUser.id, result.id, (mutualResult, mutualStatus) => {
+                          if (mutualStatus === 200) {
+                            resolve({
+                              ...result,
+                              mutualFriendsCount: mutualResult
+                            });
+                          } else {
+                            console.error("Failed to fetch mutual friends for id:", result.id);
+                            resolve({
+                              ...result,
+                              mutualFriendsCount: 0
+                            });
+                          }
+                        });
                       } else {
                         console.error("Failed to fetch user details for id:", suggestion.id);
                         resolve(null);
@@ -32,6 +45,7 @@ export default function AddFriendPage() {
                   })
                 )
               );
+      
               const validUsers = detailedUsers.filter(user => user !== null);
               setSuggestedUsers(validUsers);
       
@@ -86,7 +100,9 @@ export default function AddFriendPage() {
               <div className="avatar" />
               <div className="friend-info">
                 <div className="username">@{user.username}</div>
-                <div className="mutual">22 mutual friends</div>
+                <div className="mutual">
+                    {user.mutualFriendsCount} {user.mutualFriendsCount === 1 ? " mutual friend" : " mutual friends"}
+                </div>              
               </div>
               <div className="buttons">
                 <button className="btn-profile" onClick={() => history.push(`/view-profile/${user.id}`)}>View Profile</button>

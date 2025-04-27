@@ -3,18 +3,20 @@ import "./HomePage.css";
 import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getFriendList } from "../../API/neo-friend";
+import { getPendingRequests } from "../../API/friend-request";
 
 export default function HomePage() {
 
   const [user, setUser] = useState(null);
   const [friends, setFriends] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-
+  
     if (storedUser) {
       setUser(storedUser);
-
+  
       getFriendList(storedUser.id, (result, status, error) => {
         if (status === 200 && result) {
           setFriends(result);
@@ -22,8 +24,15 @@ export default function HomePage() {
           console.error('Failed to fetch friends list:', error);
         }
       });
+  
+      getPendingRequests(storedUser.id, (result, status, error) => {
+        if (status === 200 && Array.isArray(result)) {
+          setPendingRequests(result);
+        } else {
+          console.error('Failed to fetch pending requests:', error);
+        }
+      });
     }
-
   }, []);
 
   const history = useHistory();
@@ -85,8 +94,9 @@ export default function HomePage() {
             </button>
 
             <button className="homepage-button homepage-add-friend" onClick={handleAddFriendsClick}>Add New Friends</button>
-            <button className="homepage-button homepage-pending-requests" onClick={handlePendingRequestsClick}> Pending Requests </button>
-
+            <button className="homepage-button homepage-pending-requests" onClick={handlePendingRequestsClick}>
+              Pending Requests <span>{pendingRequests.length}</span>
+            </button>
             <button className="homepage-button homepage-edit-profile" onClick={handleEditPageClick}>Edit Profile</button>
             <button className="homepage-button homepage-add-photo">Add Photo</button>
             <button className="homepage-button homepage-logout" onClick={handleLogout}>Log Out</button>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { getFriendList, deleteFriendship } from "../../API/neo-friend";
+import { getFriendList, deleteFriendship, getMutualFriendsNr } from "../../API/neo-friend";
 import { getUserById } from "../../API/user-account"; 
 
 import { useHistory } from "react-router-dom";
@@ -8,13 +8,13 @@ import "./FriendList.css";
 export default function FriendList() {
   const [friends, setFriends] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // <-- Loading state
+  const [isLoading, setIsLoading] = useState(false); 
   const [loggedUser] = useState(() => JSON.parse(localStorage.getItem("user")));
   const history = useHistory();
 
   const loadFriends = useCallback(() => {
     if (!loggedUser) return;
-    setIsLoading(true); // start loading
+    setIsLoading(true);
 
 
     getFriendList(loggedUser.id, async (friendData, friendStatus) => {
@@ -24,7 +24,19 @@ export default function FriendList() {
             new Promise((resolve) => {
               getUserById(friend.id, (userData, userStatus) => {
                 if (userStatus === 200) {
-                  resolve(userData);
+                  getMutualFriendsNr(loggedUser.id, userData.id, (mutualData, mutualStatus) => {
+                    if (mutualStatus === 200) {
+                      resolve({
+                        ...userData,
+                        mutualFriendsCount: mutualData
+                      });
+                    } else {
+                      resolve({
+                        ...userData,
+                        mutualFriendsCount: 0
+                      });
+                    }
+                  });
                 } else {
                   resolve(null);
                 }
@@ -32,14 +44,14 @@ export default function FriendList() {
             })
           )
         );
-
+  
         const filtered = fullFriends.filter(f => f !== null);
         setFriends(filtered);
       } else {
         console.error("Failed to load friends");
       }
-
-      setIsLoading(false); // end loading
+  
+      setIsLoading(false);
     });
   }, [loggedUser]);
 
@@ -48,13 +60,14 @@ export default function FriendList() {
   }, [loadFriends]);
 
   const handleRemoveFriend = (friendId) => {
+    setIsLoading(true);
     deleteFriendship(loggedUser.id, friendId, (result, status, error) => {
       if (status >= 200 && status < 300) {
-        setFriends(prev => prev.filter(friend => friend.id !== friendId)); 
-
+        loadFriends();
       } else {
         alert("Failed to remove friend.");
         console.error(error);
+        setIsLoading(false);
       }
     });
   };
@@ -78,7 +91,7 @@ export default function FriendList() {
         />
         <div className="scroll-frame">
           {isLoading ? (
-            <div className="spinner"></div> // spinner animat
+            <div className="spinner"></div>
           ) : (
             filteredFriends.map(friend => (
               <div className="friend-card" key={friend.id}>
@@ -89,7 +102,10 @@ export default function FriendList() {
                 />
                 <div className="friend-info">
                   <div className="username">@{friend.username}</div>
-                  <div className="mutual">22 mutual friends</div>
+                  <div className="mutual">
+                      {friend.mutualFriendsCount} 
+                      {friend.mutualFriendsCount === 1 ? " mutual friend" : " mutual friends"}
+                    </div>
                 </div>
                 <div className="buttons">
                   <button

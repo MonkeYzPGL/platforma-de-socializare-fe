@@ -1,37 +1,57 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getAllUsers } from "../../API/user-account";
 import { getPendingRequests, acceptFriendRequest, rejectFriendRequest } from "../../API/friend-request";
+import { getMutualFriendsNr } from "../../API/neo-friend";
 import { useHistory } from "react-router-dom";
 import "./PendingRequests.css";
 
 export default function PendingRequests() {
   const [pendingUsers, setPendingUsers] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // <- loading state
+  const [isLoading, setIsLoading] = useState(false); 
   const [loggedUser] = useState(() => JSON.parse(localStorage.getItem("user")));
   const history = useHistory();
 
   const loadPendingUsers = useCallback(() => {
     if (!loggedUser) return;
-    setIsLoading(true); // start loading
+    setIsLoading(true); 
 
     getAllUsers((allUsers, userStatus) => {
       if (userStatus === 200) {
-        getPendingRequests(loggedUser.id, (pendingData, pendingStatus) => {
+        getPendingRequests(loggedUser.id, async (pendingData, pendingStatus) => {
           if (pendingStatus === 200 && Array.isArray(pendingData)) {
             const senderIds = pendingData.map(p => Number(p.senderId));
-            const filtered = allUsers.filter(
-              user => senderIds.includes(Number(user.id))
+            const filtered = allUsers.filter(user => senderIds.includes(Number(user.id)));
+  
+            const detailedPending = await Promise.all(
+              filtered.map(user =>
+                new Promise((resolve) => {
+                  getMutualFriendsNr(loggedUser.id, user.id, (mutualData, mutualStatus) => {
+                    if (mutualStatus === 200) {
+                      resolve({
+                        ...user,
+                        mutualFriendsCount: mutualData
+                      });
+                    } else {
+                      resolve({
+                        ...user,
+                        mutualFriendsCount: 0
+                      });
+                    }
+                  });
+                })
+              )
             );
-            setPendingUsers(filtered);
+  
+            setPendingUsers(detailedPending);
           } else {
             console.error("Failed to fetch pending requests");
           }
-          setIsLoading(false); // end loading
+          setIsLoading(false);
         });
       } else {
         console.error("Failed to fetch users");
-        setIsLoading(false); // end loading
+        setIsLoading(false);
       }
     });
   }, [loggedUser]);
@@ -42,22 +62,26 @@ export default function PendingRequests() {
 
   const handleAccept = (senderId) => {
     acceptFriendRequest(senderId, loggedUser.id, (result, status, error) => {
+      setIsLoading(true); 
       if (status >= 200 && status < 300) {  
-        setPendingUsers(prev => prev.filter(user => user.id !== senderId));
+        loadPendingUsers()
       } else {
         alert("Failed to accept request.");
         console.error(error);
+        setIsLoading(false); 
       }
     });
   };
   
   const handleReject = (senderId) => {
     rejectFriendRequest(senderId, loggedUser.id, (result, status, error) => {
+      setIsLoading(true); 
       if (status >= 200 && status < 300) { 
-        setPendingUsers(prev => prev.filter(user => user.id !== senderId));
+        loadPendingUsers()
       } else {
         alert("Failed to reject request.");
         console.error(error);
+        setIsLoading(false); 
       }
     });
   };
@@ -82,7 +106,7 @@ export default function PendingRequests() {
 
         <div className="scroll-frame">
           {isLoading ? (
-            <div className="spinner"></div> // spinner loading
+            <div className="spinner"></div>
           ) : (
             filteredUsers.map(user => (
               <div className="friend-card" key={user.id}>
@@ -93,7 +117,10 @@ export default function PendingRequests() {
                 />
                 <div className="friend-info">
                   <div className="username">@{user.username}</div>
-                  <div className="mutual">22 mutual friends</div>
+                  <div className="mutual">
+                      {user.mutualFriendsCount} 
+                      {user.mutualFriendsCount === 1 ? " mutual friend" : " mutual friends"}
+                  </div>
                 </div>
                 <div className="buttons">
                   <button
