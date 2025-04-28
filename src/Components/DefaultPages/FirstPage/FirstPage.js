@@ -26,7 +26,7 @@ const FirstPage = (props) => {
           } else if (adminStatus === 204) {
             alert("Neither user nor admin account found.");
           } else if (adminStatus === 403) {
-            alert("Wait for the admin to validate your admin account!");
+            alert("Account suspended or not validated yet!");
           } else {
             alert("Admin login error.");
           }
