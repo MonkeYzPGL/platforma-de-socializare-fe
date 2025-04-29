@@ -4,6 +4,7 @@ import { getPendingRequests, acceptFriendRequest, rejectFriendRequest } from "..
 import { getMutualFriendsNr } from "../../API/neo-friend";
 import { useHistory } from "react-router-dom";
 import "./PendingRequests.css";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function PendingRequests() {
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -95,7 +96,7 @@ export default function PendingRequests() {
 
   return (
     <div className="pending-requests-page">
-      <div className="logo" />
+      <ClickableLogo className="logo" />
       <div className="friend-container">
         <input
           className="search-input"

@@ -3,6 +3,7 @@ import { Table, Button, Input } from 'reactstrap';
 import { getAllAdmins, deleteAdmin, updateAdmin, createAdmin } from '../../API/admin-account';
 import '../UserTable/UserTable.css';
 import '../AdminTable/AdminTable.css';
+import ClickableLogo from "../../ClickableLogo";
 
 const AdminTablePage = () => {
     const [admins, setAdmins] = useState([]);
@@ -71,7 +72,7 @@ const AdminTablePage = () => {
 
     return (
         <div className="user-table-container">
-            <div className="admin-logo"></div>
+            <ClickableLogo className="admin-logo"/>
 
             <div className="search-wrapper with-button">
                 <i className="fas fa-search search-icon" />
