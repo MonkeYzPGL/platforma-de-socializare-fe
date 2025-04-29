@@ -3,10 +3,16 @@ import "../HomePage/HomePage.css";
 import "./ViewProfile.css"
 import { useParams } from "react-router-dom";
 import { getUserById } from "../../API/user-account";
+import { useHistory } from "react-router-dom";
 
 export default function ViewProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
+  const history = useHistory();
+
+  const handleMessageClick = () => {
+    history.push(`/send-message/${user.id}`);
+  };
 
   useEffect(() => {
     if (id) {
@@ -41,8 +47,10 @@ export default function ViewProfilePage() {
                   : "This user has no description."}
               </p>
             </div>
+            <button className="message-button" title="Send Message" onClick={handleMessageClick}>
+              <i className="fas fa-envelope"></i>
+            </button>
           </div>
-
           <div className="homepage-divider" />
         </div>
       </div>
