@@ -3,6 +3,8 @@ import "../HomePage/HomePage.css";
 import "./ViewProfile.css"
 import { useParams } from "react-router-dom";
 import { getUserById } from "../../API/user-account";
+import { useHistory } from "react-router-dom";
+import SearchBar from "../../GeneralComponents/SearchBar";
 
 export default function ViewProfilePage() {
   const { id } = useParams();
@@ -22,6 +24,7 @@ export default function ViewProfilePage() {
 
   return (
     <div className="homepage-container">
+      <SearchBar/>
       <div className="homepage-profile-header">
         <div className="homepage-logo" />
 

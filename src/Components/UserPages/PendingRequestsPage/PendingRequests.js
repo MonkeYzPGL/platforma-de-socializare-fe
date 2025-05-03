@@ -4,6 +4,7 @@ import { getPendingRequests, acceptFriendRequest, rejectFriendRequest } from "..
 import { getMutualFriendsNr } from "../../API/neo-friend";
 import { useHistory } from "react-router-dom";
 import "./PendingRequests.css";
+import SearchBar from "../../GeneralComponents/SearchBar";
 
 export default function PendingRequests() {
   const [pendingUsers, setPendingUsers] = useState([]);
@@ -95,6 +96,7 @@ export default function PendingRequests() {
 
   return (
     <div className="pending-requests-page">
+      <SearchBar/>
       <div className="logo" />
       <div className="friend-container">
         <input

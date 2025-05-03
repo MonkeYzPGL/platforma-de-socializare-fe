@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
+import SearchBar from "../../GeneralComponents/SearchBar";
 
 export default function HomePage() {
 
@@ -62,6 +63,7 @@ export default function HomePage() {
 
   return (
     <div className="homepage-container">
+      <SearchBar />
       <div className="homepage-profile-header">
         <div className="homepage-logo" />
 
