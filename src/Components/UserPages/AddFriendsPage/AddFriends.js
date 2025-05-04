@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getUserById } from "../../API/user-account";
-
 import { getSuggestedFriends, getMutualFriendsNr } from "../../API/neo-friend";
 import { sendFriendRequest } from '../../API/friend-request';
 import { useHistory } from "react-router-dom";
@@ -45,7 +44,6 @@ export default function AddFriendPage() {
                   })
                 )
               );
-      
               const validUsers = detailedUsers.filter(user => user !== null);
               setSuggestedUsers(validUsers);
       
