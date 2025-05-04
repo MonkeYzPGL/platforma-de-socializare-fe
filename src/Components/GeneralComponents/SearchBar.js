@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import {searchUserByUsername} from '../API/user-account';
 import "./SearchBar.css";
 
 export default function SearchBar() {
@@ -14,22 +15,20 @@ export default function SearchBar() {
       setShowDropdown(false);
       return;
     }
-
+  
     const delayDebounce = setTimeout(() => {
-      fetch(`http://socialplatform.ddns.net/api/v1/userAccount/getByUsername/${term}`)
-      .then(async res => {
-        if (!res.ok) throw new Error("User not found");
-        const data = await res.json();
-        console.log("Fetched user data:", data);
-        setUser(data);
-        setShowDropdown(true);
-      })      
-        .catch(() => {
+      searchUserByUsername(term.trim(), (result, status, error) => {
+        if (status === 200) {
+          console.log("Fetched user data:", result);
+          setUser(result);
+        } else {
+          console.warn("User not found");
           setUser(null);
-          setShowDropdown(true);
-        });
+        }
+        setShowDropdown(true);
+      });
     }, 300);
-
+  
     return () => clearTimeout(delayDebounce);
   }, [term]);
 

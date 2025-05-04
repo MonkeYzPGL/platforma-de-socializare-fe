@@ -138,13 +138,30 @@ function getUserById(id, callback) {
     });
   }
 
-export {
+function searchUserByUsername(username, callback) {
+    const request = new Request(HOST.user_api + "/getByUsername/" + username, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
 
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Searched user by username from: " + request.url);
+        }
+        callback(result, status, error);
+    });
+}
+
+
+export {
     userLogin,
     signup,
     resetPassword,
     getAllUsers,
     deleteUser,
     updateUser,
-    getUserById
+    getUserById,
+    searchUserByUsername
 };
