@@ -6,6 +6,7 @@ import PrivateRoute from './PrivateRoute';
 import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
 import AddFriendPage from './Components/UserPages/AddFriendsPage/AddFriends';
 import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
+import ChatPage from './Components/UserPages/ChatPage/Chat';
 import EditProfilePage from './Components/UserPages/EditProfilePage/EditProfilePage';
 import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
 import FriendList from './Components/UserPages/FriendListPage/FriendList';
@@ -41,6 +42,9 @@ class App extends React.Component {
 
                         <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />
+
+                        <Route exact path="/chat" render={() => <ChatPage />} />
+
                         <Route render={() => <NotFoundPage />} />
                     </Switch>
 
