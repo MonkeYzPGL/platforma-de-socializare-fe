@@ -34,7 +34,7 @@ export default function SearchBar() {
   }, [term]);
 
   const handleSelect = (userId) => {
-    console.log("Selected user ID for redirect:", userId); // AICI
+    console.log("Selected user ID for redirect:", userId);
     if (!userId) {
       console.warn("User ID is missing. Cannot redirect.");
       return;
