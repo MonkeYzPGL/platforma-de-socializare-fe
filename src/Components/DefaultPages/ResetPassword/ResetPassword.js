@@ -3,6 +3,7 @@ import "./ResetPassword.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useHistory } from "react-router-dom";
 import {resetPassword} from '../../API/user-account';
+import ClickableLogo from "../../ClickableLogo";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -65,7 +66,7 @@ const ResetPassword = () => {
 
   return (
     <div className="reset-password-container">
-      <div className="reset-logo" />
+      <ClickableLogo className="reset-logo" />
 
       <div className="reset-border">
 

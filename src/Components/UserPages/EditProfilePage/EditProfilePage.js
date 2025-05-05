@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./EditProfilePage.css";
 import { updateUser } from "../../API/user-account";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function EditProfilePage() {
   const [formData, setFormData] = useState(null);
@@ -40,7 +41,7 @@ export default function EditProfilePage() {
 
   return (
     <div className="edit-profile-page">
-      <div className="edit-logo" />
+      <ClickableLogo className="edit-logo" />
       <div className="edit-profile-container">
         <div className="close-button" onClick={() => window.history.back()}>×</div>
 

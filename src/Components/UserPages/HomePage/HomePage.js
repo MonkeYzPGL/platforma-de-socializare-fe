@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function HomePage() {
 
@@ -65,7 +66,7 @@ export default function HomePage() {
     <div className="homepage-container">
       <SearchBar />
       <div className="homepage-profile-header">
-        <div className="homepage-logo" />
+        <ClickableLogo className="homepage-logo" />
 
         <div className="homepage-profile-main">
           <div className="homepage-profile-info">

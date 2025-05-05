@@ -5,10 +5,16 @@ import { useParams } from "react-router-dom";
 import { getUserById } from "../../API/user-account";
 import { useHistory } from "react-router-dom";
 import SearchBar from "../../GeneralComponents/SearchBar";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function ViewProfilePage() {
   const { id } = useParams();
   const [user, setUser] = useState(null);
+  const history = useHistory();
+
+  const handleMessageClick = () => {
+    history.push(`/send-message/${user.id}`);
+  };
 
   useEffect(() => {
     if (id) {
@@ -26,7 +32,7 @@ export default function ViewProfilePage() {
     <div className="homepage-container">
       <SearchBar/>
       <div className="homepage-profile-header">
-        <div className="homepage-logo" />
+        <ClickableLogo className="homepage-logo" />
 
         <div className="homepage-profile-main">
           <div className="homepage-profile-info">
@@ -44,8 +50,10 @@ export default function ViewProfilePage() {
                   : "This user has no description."}
               </p>
             </div>
+            <button className="message-button" title="Send Message" onClick={handleMessageClick}>
+              <i className="fas fa-envelope"></i>
+            </button>
           </div>
-
           <div className="homepage-divider" />
         </div>
       </div>
