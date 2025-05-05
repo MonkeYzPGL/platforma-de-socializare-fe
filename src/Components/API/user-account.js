@@ -1,5 +1,3 @@
-
-//import { RiGitPullRequestFill } from "react-icons/ri";
 import RestApiClient from "./rest-client";
 const HOST = {
     user_api: "http://socialplatform.ddns.net/api/v1/userAccount"
@@ -154,6 +152,64 @@ function searchUserByUsername(username, callback) {
     });
 }
 
+function deleteProfilePicture(userId, callback) {
+    const request = new Request(`${HOST.user_api}/profile-picture/${userId}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Profile picture deleted successfully for user ID: " + userId);
+        } else if (status === 204) {
+            console.log("User not found for ID: " + userId);
+        } else if (status === 500) {
+            console.log("Error deleting profile picture.");
+        }
+        callback(result, status, error);
+    });
+}
+
+function uploadProfilePicture(userId, file, callback) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const request = new Request(`${HOST.user_api}/profile-picture/${userId}`, {
+        method: 'PUT',
+        body: formData
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Profile picture uploaded successfully to: " + request.url);
+        } else if (status === 204) {
+            console.log("User not found for ID: " + userId);
+        } else if (status === 500) {
+            console.log("Upload failed.");
+        }
+        callback(result, status, error);
+    });
+}
+
+function getProfilePictureUrl(userId, callback) {
+    const request = new Request(`${HOST.user_api}/profile-picture/${userId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Profile picture URL fetched from: " + request.url);
+        } else if (status === 204) {
+            console.log("No profile picture found for user with ID: " + userId);
+        }
+        callback(result, status, error);
+    });
+}
 
 export {
     userLogin,
@@ -163,5 +219,8 @@ export {
     deleteUser,
     updateUser,
     getUserById,
-    searchUserByUsername
+    searchUserByUsername,
+    getProfilePictureUrl,
+    uploadProfilePicture,
+    deleteProfilePicture
 };

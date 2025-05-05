@@ -6,12 +6,17 @@ import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
+import { uploadProfilePicture, deleteProfilePicture } from "../../API/user-account";
 
 export default function HomePage() {
 
   const [user, setUser] = useState(null);
   const [friends, setFriends] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
+  const history = useHistory();
+  const [showUploadForm, setShowUploadForm] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [pendingFile, setPendingFile] = useState(null);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -37,7 +42,74 @@ export default function HomePage() {
     }
   }, []);
 
-  const history = useHistory();
+  const handleDeleteProfilePicture = () => {
+    deleteProfilePicture(user.id, (result, status, error) => {
+      if (status === 200) {
+        alert("Poza de profil a fost stearsa!");
+        setSelectedImage(null);
+        const updatedUser = { ...user, profilePicture: null };
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+      } else {
+        alert("Eroare la stergerea pozei.");
+      }
+    });
+  };
+  
+
+  const handleProfileEditClick = () => {
+    setShowUploadForm(true);
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === "image/png") {
+      setSelectedImage(URL.createObjectURL(file));
+      setPendingFile(file);
+    } else {
+      alert("Doar fișiere .png sunt permise.");
+    }
+  };
+
+  const handleDrop = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+    if (file && file.type === "image/png") {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result);
+        setPendingFile(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      alert("Poti incarca doar fisiere PNG.");
+    }
+  };
+
+  const handleUploadConfirm = () => {
+    if (!pendingFile) return;
+  
+    uploadProfilePicture(user.id, pendingFile, (result, status, error) => {
+      if (status === 200 && result?.url) {
+        alert("Poza a fost actualizata!");
+
+        const updatedUser = { ...user, profilePicture: result.url };
+        setUser(updatedUser);
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+  
+        setSelectedImage(result.url);
+  
+        setShowUploadForm(false);
+        setPendingFile(null);
+      } else {
+        alert("Eroare la actualizare.");
+      }
+    });
+  };
+  
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
 
   const handleEditPageClick = () => {
     history.push("/edit-profile");
@@ -69,10 +141,16 @@ export default function HomePage() {
         <ClickableLogo className="homepage-logo" />
 
         <div className="homepage-profile-main">
+          =
           <div className="homepage-profile-info">
-            <div className="homepage-profile-pic">
-              <span className="homepage-edit-icon"></span>
-            </div>
+          <div className="homepage-profile-pic" onClick={handleProfileEditClick}>
+          <img
+            src={selectedImage || (user?.profilePicture || "/public/poze/firstPage.jpg")}
+            alt="Profile"
+            className="profile-preview-img"
+          />
+            <span className="homepage-edit-icon"></span>
+          </div>
             <div className="homepage-profile-text">
               <h1 className="homepage-name">
                 {user ? `${user.firstName} ${user.lastName}` : "Your name"}
@@ -85,7 +163,18 @@ export default function HomePage() {
                   ? user.description
                   : "Create your own description"}
               </p>
-
+              {showUploadForm && (
+                <div className="upload-form" onDrop={handleDrop} onDragOver={handleDragOver}>
+                  <p>Trage o poză .png aici sau selectează manual:</p>
+                  <input type="file" accept="image/png" onChange={handleFileChange} />
+                  {pendingFile && (
+                    <button onClick={handleUploadConfirm} className="update-button">Update</button>
+                  )}
+                  {user?.profilePicture && (
+                    <button onClick={handleDeleteProfilePicture} className="delete-button">Delete</button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
