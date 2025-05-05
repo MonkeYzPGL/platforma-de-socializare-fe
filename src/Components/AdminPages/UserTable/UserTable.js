@@ -5,6 +5,7 @@ import { validateUser } from '../../API/admin-account';
 import { useHistory } from "react-router-dom";
 import './UserTable.css'; 
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import ClickableLogo from "../../ClickableLogo";
 
 const UserTablePage = () => {
     const [allUsers, setAllUsers] = useState([]);
@@ -93,7 +94,7 @@ const UserTablePage = () => {
 
     return (
         <div className="user-table-container">
-            <div className="admin-logo"></div>
+            <ClickableLogo className="admin-logo"/>
 
             <div className="admin-buttons">
                 <Button 

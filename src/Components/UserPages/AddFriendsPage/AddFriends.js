@@ -1,10 +1,10 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getUserById } from "../../API/user-account";
-
 import { getSuggestedFriends, getMutualFriendsNr } from "../../API/neo-friend";
 import { sendFriendRequest } from '../../API/friend-request';
 import { useHistory } from "react-router-dom";
 import "./AddFriends.css";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function AddFriendPage() {
     const [suggestedUsers, setSuggestedUsers] = useState([]);
@@ -85,7 +85,7 @@ export default function AddFriendPage() {
   
   return (
     <div className="add-friend-page">
-      <div className="logo" />
+      <ClickableLogo className="logo" />
       <div className="friend-container">
       <input
             className="search-input"

@@ -3,6 +3,7 @@ import "./SignUpPage.css";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import {useHistory} from "react-router-dom";
 import { signup } from "../../API/user-account";
+import ClickableLogo from "../../ClickableLogo";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -36,9 +37,7 @@ const SignUpPage = () => {
     }
   };
   
-
   const history = useHistory();
-
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [repeatVisible, setRepeatVisible] = useState(false);
   const [passwordErrors, setPasswordErrors] = useState([]);
@@ -54,7 +53,6 @@ const SignUpPage = () => {
     [name]: value
   }));
 };
-
 
   useEffect(() => {
     const errors = [];
@@ -95,7 +93,7 @@ const SignUpPage = () => {
 
   return (
     <div className="signup-container">
-      <div className="logo" />
+      <ClickableLogo className="logo" />
       <div className="signup-image-container" />
 
       <div className="signup-form-box">

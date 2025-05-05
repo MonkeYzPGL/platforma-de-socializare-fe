@@ -3,6 +3,7 @@ import "../HomePage/HomePage.css";
 import "./ViewProfile.css"
 import { useParams } from "react-router-dom";
 import { getUserById } from "../../API/user-account";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function ViewProfilePage() {
   const { id } = useParams();
@@ -23,7 +24,7 @@ export default function ViewProfilePage() {
   return (
     <div className="homepage-container">
       <div className="homepage-profile-header">
-        <div className="homepage-logo" />
+        <ClickableLogo className="homepage-logo" />
 
         <div className="homepage-profile-main">
           <div className="homepage-profile-info">

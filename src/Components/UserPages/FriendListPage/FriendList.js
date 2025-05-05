@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { getFriendList, deleteFriendship, getMutualFriendsNr } from "../../API/neo-friend";
 import { getUserById } from "../../API/user-account"; 
-
 import { useHistory } from "react-router-dom";
 import "./FriendList.css";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function FriendList() {
   const [friends, setFriends] = useState([]);
@@ -81,7 +81,7 @@ export default function FriendList() {
 
   return (
     <div className="friend-list-page">
-      <div className="logo" />
+      <ClickableLogo className="logo" />
       <div className="friend-container">
         <input
           className="search-input"
