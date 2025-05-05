@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
+import ClickableLogo from "../../ClickableLogo";
 
 export default function HomePage() {
 
@@ -63,7 +64,7 @@ export default function HomePage() {
   return (
     <div className="homepage-container">
       <div className="homepage-profile-header">
-        <div className="homepage-logo" />
+        <ClickableLogo className="homepage-logo" />
 
         <div className="homepage-profile-main">
           <div className="homepage-profile-info">
