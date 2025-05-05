@@ -5,6 +5,7 @@ import PrivateRoute from './PrivateRoute';
 
 import AccountCreated from  './Components/DefaultPages/AccountCreated/AccountCreated';
 import AddFriendPage from './Components/UserPages/AddFriendsPage/AddFriends';
+import AddPhotoPage from './Components/UserPages/AddPhotoPage/AddPhoto';
 import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
 import ChatPage from './Components/UserPages/ChatPage/Chat';
 import EditProfilePage from './Components/UserPages/EditProfilePage/EditProfilePage';
@@ -38,7 +39,8 @@ class App extends React.Component {
                         <PrivateRoute exact path='/edit-profile' component={EditProfilePage} requiredRole="user" />
                         <PrivateRoute exact path='/add-friends' component={AddFriendPage} requiredRole="user" />
                         <PrivateRoute exact path='/friend-list' component={FriendList} requiredRole="user" />
-                        <Route exact path="/pending-requests" render={() => <PendingRequests />} />
+                        <PrivateRoute exact path="/pending-requests" component={PendingRequests} requiredRole="user" />
+                        <PrivateRoute exact path="/add-photo" component={AddPhotoPage} requiredRole="user" />
 
                         <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />
