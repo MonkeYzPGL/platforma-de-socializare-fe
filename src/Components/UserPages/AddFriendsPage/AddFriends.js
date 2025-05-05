@@ -45,7 +45,6 @@ export default function AddFriendPage() {
                   })
                 )
               );
-      
               const validUsers = detailedUsers.filter(user => user !== null);
               setSuggestedUsers(validUsers);
       
