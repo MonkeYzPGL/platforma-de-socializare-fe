@@ -246,4 +246,5 @@ export {
     uploadProfilePicture,
     deleteProfilePicture,
     uploadUserPhoto
+
 };
