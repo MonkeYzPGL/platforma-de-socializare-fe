@@ -96,7 +96,7 @@ export default function FriendList() {
             filteredFriends.map(friend => (
               <div className="friend-card" key={friend.id}>
                 <img
-                  src={friend?.profilePicture || "/firstPage.png"}
+                  src={friend?.profilePicture || "/poze/no_photo.png"}
                   alt="Avatar"
                   className="avatar"
                 />

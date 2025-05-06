@@ -173,7 +173,7 @@ export default function HomePage() {
           <div className="homepage-profile-info">
           <div className="homepage-profile-pic" onClick={handleProfileEditClick}>
           <img
-            src={selectedImage || (user?.profilePicture || "/public/poze/firstPage.jpg")}
+            src={selectedImage || (user?.profilePicture || "/public/poze/no_photo.jpg")}
             alt="Profile"
             className="profile-preview-img"
           />
@@ -251,7 +251,7 @@ export default function HomePage() {
             <img src={activePhoto} alt="Expanded" />
             <div className="photo-info">
               <div className="likes">❤️ 128</div>
-              <div className="desc"><b>Description:</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit...</div>
+              <div className="desc"><b>Description:</b> Primul meu InternSHIP...💀💀💀💀💀</div>
               <div className="comments">
                 <h4>Comments</h4>
                 <div className="comment">
