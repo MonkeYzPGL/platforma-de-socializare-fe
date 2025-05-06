@@ -115,7 +115,6 @@ const UserTablePage = () => {
             </div>
 
             <div className="search-wrapper">
-                <i className="fas fa-search search-icon" />
                 <input
                     type="text"
                     placeholder="Search by name or username..."
