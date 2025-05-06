@@ -232,6 +232,25 @@ function uploadUserPhoto(userId, photoTitle, file, callback) {
     });
 }
 
+function getUserPhotos(userId, callback) {
+    const request = new Request(`${HOST.user_api}/photos/${userId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log(`Fetched photos for user ID: ${userId}`);
+        } else if (status === 204) {
+            console.log(`No photos found for user ID: ${userId}`);
+        } else {
+            console.log(`Failed to fetch photos for user ID: ${userId}`);
+        }
+        callback(result, status, error);
+    });
+}
 
 export {
     userLogin,
@@ -245,6 +264,6 @@ export {
     getProfilePictureUrl,
     uploadProfilePicture,
     deleteProfilePicture,
-    uploadUserPhoto
-
+    uploadUserPhoto,
+    getUserPhotos
 };

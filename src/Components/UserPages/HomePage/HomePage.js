@@ -6,7 +6,7 @@ import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
-import { uploadProfilePicture, deleteProfilePicture } from "../../API/user-account";
+import { uploadProfilePicture, deleteProfilePicture, getUserPhotos } from "../../API/user-account";
 
 export default function HomePage() {
 
@@ -17,26 +17,27 @@ export default function HomePage() {
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [pendingFile, setPendingFile] = useState(null);
+  const [userPhotos, setUserPhotos] = useState([]);
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
-  
+
     if (storedUser) {
       setUser(storedUser);
-  
+
       getFriendList(storedUser.id, (result, status, error) => {
-        if (status === 200 && result) {
-          setFriends(result);
-        } else {
-          console.error('Failed to fetch friends list:', error);
-        }
+        if (status === 200 && result) setFriends(result);
       });
-  
+
       getPendingRequests(storedUser.id, (result, status, error) => {
-        if (status === 200 && Array.isArray(result)) {
-          setPendingRequests(result);
+        if (status === 200 && Array.isArray(result)) setPendingRequests(result);
+      });
+
+      getUserPhotos(storedUser.id, (result, status, error) => {
+        if (status === 200 && result?.photos) {
+          setUserPhotos(result.photos);
         } else {
-          console.error('Failed to fetch pending requests:', error);
+          setUserPhotos([]);
         }
       });
     }
@@ -66,7 +67,7 @@ export default function HomePage() {
       setSelectedImage(URL.createObjectURL(file));
       setPendingFile(file);
     } else {
-      alert("Doar fișiere .png sunt permise.");
+      alert("Doar fisiere .png sunt permise.");
     }
   };
 
@@ -132,7 +133,6 @@ export default function HomePage() {
     history.push("/pending-requests");
   };
   
-
   return (
     <div className="homepage-container">
       <SearchBar />
@@ -164,7 +164,7 @@ export default function HomePage() {
               </p>
               {showUploadForm && (
                 <div className="upload-form" onDrop={handleDrop} onDragOver={handleDragOver}>
-                  <p>Trage o poză .png aici sau selectează manual:</p>
+                  <p>Trage o poza .png aici sau selecteaza manual:</p>
                   <input type="file" accept="image/png" onChange={handleFileChange} />
                   {pendingFile && (
                     <button onClick={handleUploadConfirm} className="update-button">Update</button>
@@ -196,12 +196,21 @@ export default function HomePage() {
       </div>
 
       <div className="homepage-photo-gallery">
-        <div className="homepage-photo-wrapper"><div className="homepage-photo homepage-photo1"></div></div>
-        <div className="homepage-photo-wrapper"><div className="homepage-photo homepage-photo2"></div></div>
-        <div className="homepage-photo-wrapper"><div className="homepage-photo homepage-photo3"></div></div>
-        <div className="homepage-photo-wrapper"><div className="homepage-photo homepage-photo4"></div></div>
-        <div className="homepage-photo-wrapper"><div className="homepage-photo homepage-photo5"></div></div>
-        <div className="homepage-photo-wrapper"><div className="homepage-photo homepage-photo6"></div></div>
+        {userPhotos.length > 0 ? (
+          userPhotos.map((photoUrl, idx) => (
+            <div key={idx} className="homepage-photo-wrapper">
+              <div
+                className="homepage-photo"
+                style={{ backgroundImage: `url(${photoUrl})` }}
+              ></div>
+            </div>
+          ))
+        ) : (
+          <div className="no-photos-message">
+            <img src="/public/poze/no-photos-icon.png" alt="No Photos" />
+            <p>This space is so boring...<br />Maybe add some photos?</p>
+          </div>
+        )}
       </div>
     </div>
   );
