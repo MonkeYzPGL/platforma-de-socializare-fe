@@ -55,7 +55,6 @@ export default function HomePage() {
       }
     });
   };
-  
 
   const handleProfileEditClick = () => {
     setShowUploadForm(true);
@@ -190,7 +189,7 @@ export default function HomePage() {
               Pending Requests <span>{pendingRequests.length}</span>
             </button>
             <button className="homepage-button homepage-edit-profile" onClick={handleEditPageClick}>Edit Profile</button>
-            <button className="homepage-button homepage-add-photo">Add Photo</button>
+            <button className="homepage-button homepage-add-photo" onClick={() => history.push("/add-photo")}>Add Photo</button>
             <button className="homepage-button homepage-logout" onClick={handleLogout}>Log Out</button>
           </div>
         </div>

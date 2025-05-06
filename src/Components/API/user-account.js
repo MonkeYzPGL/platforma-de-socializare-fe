@@ -211,6 +211,28 @@ function getProfilePictureUrl(userId, callback) {
     });
 }
 
+function uploadUserPhoto(userId, photoTitle, file, callback) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const request = new Request(`${HOST.user_api}/photo/${userId}/${photoTitle}`, {
+        method: 'PUT',
+        body: formData
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log(`Photo '${photoTitle}' uploaded successfully for user ID: ${userId}`);
+        } else if (status === 204) {
+            console.log(`User not found: ${userId}`);
+        } else {
+            console.log(`Failed to upload photo '${photoTitle}'`);
+        }
+        callback(result, status, error);
+    });
+}
+
+
 export {
     userLogin,
     signup,
@@ -222,5 +244,7 @@ export {
     searchUserByUsername,
     getProfilePictureUrl,
     uploadProfilePicture,
-    deleteProfilePicture
+    deleteProfilePicture,
+    uploadUserPhoto
+
 };
