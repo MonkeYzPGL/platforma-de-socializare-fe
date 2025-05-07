@@ -20,7 +20,6 @@ export default function HomePage() {
   const [userPhotos, setUserPhotos] = useState([]);
   const [activePhoto, setActivePhoto] = useState(null);
 
-
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
@@ -233,7 +232,6 @@ export default function HomePage() {
                 className="homepage-photo"
                 style={{ backgroundImage: `url(${photoUrl})` }}
                 onClick={() => handlePhotoClick(photoUrl)}
-
               ></div>
             </div>
           ))

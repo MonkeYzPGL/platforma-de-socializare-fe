@@ -75,7 +75,6 @@ const AdminTablePage = () => {
             <ClickableLogo className="admin-logo"/>
 
             <div className="search-wrapper with-button">
-                <i className="fas fa-search search-icon" />
                 <input
                     type="text"
                     placeholder="Search by username..."

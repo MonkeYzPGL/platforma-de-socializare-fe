@@ -96,7 +96,11 @@ export default function AddFriendPage() {
         <div className="scroll-frame">
             {filteredUsers.map(user => (
             <div className="friend-card" key={user.id}>
-              <div className="avatar" />
+              <img
+                className="avatar"
+                src={user.profilePicture && user.profilePicture.trim() !== "" ? user.profilePicture : "/poze/no_photo.png"}
+                alt="avatar"
+              />
               <div className="friend-info">
                 <div className="username">@{user.username}</div>
                 <div className="mutual">
