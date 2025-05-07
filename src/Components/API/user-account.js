@@ -252,6 +252,25 @@ function getUserPhotos(userId, callback) {
     });
 }
 
+function deleteUserPhoto(userId, photoTitle, callback) {
+    const request = new Request(`${HOST.user_api}/photo/${userId}/${photoTitle}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log(`Photo '${photoTitle}' deleted successfully for user ID: ${userId}`);
+        } else {
+            console.log(`Failed to delete photo '${photoTitle}' for user ID: ${userId}`);
+        }
+        callback(result, status, error);
+    });
+}
+
+
 export {
     userLogin,
     signup,
@@ -265,5 +284,6 @@ export {
     uploadProfilePicture,
     deleteProfilePicture,
     uploadUserPhoto,
-    getUserPhotos
+    getUserPhotos,
+    deleteUserPhoto 
 };

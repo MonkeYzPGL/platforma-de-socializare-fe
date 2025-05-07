@@ -6,7 +6,7 @@ import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
-import { uploadProfilePicture, deleteProfilePicture, getUserPhotos } from "../../API/user-account";
+import { uploadProfilePicture, deleteProfilePicture, getUserPhotos, deleteUserPhoto } from "../../API/user-account";
 
 export default function HomePage() {
 
@@ -18,6 +18,8 @@ export default function HomePage() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [pendingFile, setPendingFile] = useState(null);
   const [userPhotos, setUserPhotos] = useState([]);
+  const [activePhoto, setActivePhoto] = useState(null);
+
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -42,6 +44,26 @@ export default function HomePage() {
       });
     }
   }, []);
+
+  const handleDeletePhoto = (photoUrl) => {
+    const parts = photoUrl.split('/');
+    const userId = parts[parts.length - 2];
+    const photoTitleWithExt = parts[parts.length - 1];
+    const photoTitle = photoTitleWithExt.replace(/\.[^/.]+$/, "");
+    const confirmDelete = window.confirm("Sigur vrei sa stergi aceasta poza?");
+
+    if (!confirmDelete) return;
+    
+    deleteUserPhoto(userId, photoTitle, (result, status, error) => {
+      if (status === 200) {
+        alert("Poza a fost stearsa!");
+        setUserPhotos(prev => prev.filter(p => p !== photoUrl));
+        setActivePhoto(null);
+      } else {
+        alert("Eroare la stergerea pozei.");
+      }
+    });
+  };
 
   const handleDeleteProfilePicture = () => {
     deleteProfilePicture(user.id, (result, status, error) => {
@@ -133,6 +155,14 @@ export default function HomePage() {
     history.push("/pending-requests");
   };
   
+  const handlePhotoClick = (photoUrl) => {
+    setActivePhoto(photoUrl);
+  };
+  
+  const closeModal = () => {
+    setActivePhoto(null);
+  };
+
   return (
     <div className="homepage-container">
       <SearchBar />
@@ -202,6 +232,8 @@ export default function HomePage() {
               <div
                 className="homepage-photo"
                 style={{ backgroundImage: `url(${photoUrl})` }}
+                onClick={() => handlePhotoClick(photoUrl)}
+
               ></div>
             </div>
           ))
@@ -212,6 +244,32 @@ export default function HomePage() {
           </div>
         )}
       </div>
+      {activePhoto && (
+        <div className="photo-modal-overlay" onClick={closeModal}>
+          <div className="photo-modal" onClick={e => e.stopPropagation()}>
+            <button className="delete-photo-btn" onClick={() => handleDeletePhoto(activePhoto)}>
+              🗑️
+            </button>
+            <img src={activePhoto} alt="Expanded" />
+            <div className="photo-info">
+              <div className="likes">❤️ 128</div>
+              <div className="desc"><b>Description:</b> Lorem ipsum dolor sit amet, consectetur adipiscing elit...</div>
+              <div className="comments">
+                <h4>Comments</h4>
+                <div className="comment">
+                  <img src="/public/poze/default-avatar.png" alt="avatar" />
+                  <span><b>sampleUser:</b> Super poza!</span>
+                </div>
+                <div className="comment">
+                  <img src="/public/poze/default-avatar.png" alt="avatar" />
+                  <span><b>sampleUser:</b> Mi-a placut vibe-ul!</span>
+                </div>
+              </div>
+            </div>
+            <span className="close-modal" onClick={closeModal}>✖</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

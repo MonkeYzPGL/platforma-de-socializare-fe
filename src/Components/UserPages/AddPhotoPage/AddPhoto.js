@@ -35,7 +35,7 @@ export default function AddPhotoPage() {
     uploadUserPhoto(user.id, photoTitle, file, (res, status, err) => {
       if (status === 200) {
         alert("Poza adaugata!");
-        history.push("/home-page");
+        history.push("/home-user");
       } else {
         alert("Eroare la upload.");
       }
