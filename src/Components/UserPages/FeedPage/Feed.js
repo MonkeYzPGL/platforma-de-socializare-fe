@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Feed.css";
 import { getFriendList } from "../../API/neo-friend";
-import { getUserById, getUserPhotos } from "../../API/user-account";
+import { getUserById, getAlbumPhotos, getUserAlbums } from "../../API/user-account";
 import ClickableLogo from "../../ClickableLogo";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import { useHistory } from "react-router-dom";
@@ -11,44 +11,71 @@ export default function FeedPage() {
   const [posts, setPosts] = useState([]);
   const history = useHistory();
   const [hasNoFriends, setHasNoFriends] = useState(false);
+  const [albumIndexes, setAlbumIndexes] = useState({});
 
   useEffect(() => {
-    const loggedUser = JSON.parse(localStorage.getItem("user"));
-    if (!loggedUser) return;
+      const loggedUser = JSON.parse(localStorage.getItem("user"));
+      if (!loggedUser) return;
 
-    getFriendList(loggedUser.id, async (friends, status) => {
-      if (status === 200 && Array.isArray(friends)) {
-        if (friends.length === 0) {
-          setHasNoFriends(true);
-          return;
-        }
-        const allPosts = [];
+      getFriendList(loggedUser.id, async (friends, status) => {
+          if (status === 200 && Array.isArray(friends)) {
+              if (friends.length === 0) {
+                  setHasNoFriends(true);
+                  return;
+              }
 
-        for (const friend of friends) {
-          await getUserById(friend.id, async (userData, statusUser) => {
-            if (statusUser === 200) {
-              await getUserPhotos(friend.id, (photoResult, statusPhoto) => {
-                if (statusPhoto === 200 && photoResult?.photos?.length > 0) {
-                  photoResult.photos.forEach((photoUrl) => {
-                    allPosts.push({
-                      userId: friend.id,
-                      photoUrl,
-                      username: userData.username,
-                      profilePicture: userData.profilePicture || "/public/poze/default-avatar.png"
-                    });
+              const allPosts = [];
+
+              for (const friend of friends) {
+                  await getUserById(friend.id, async (userData, statusUser) => {
+                      if (statusUser === 200) {
+                          
+                          await getUserAlbums(friend.id, async (albumsResult, statusAlbums) => {
+                              if (statusAlbums === 200 && albumsResult.albums) {
+                                  
+                                  const albums = [];
+
+                                  albumsResult.albums.forEach(item => {
+                                      if (item.endsWith(".png")) {
+                                          allPosts.push({
+                                              type: "photo",
+                                              userId: friend.id,
+                                              url: `https://platforma-de-socializare-image-pool.s3.eu-north-1.amazonaws.com/${friend.id}/${item}`,
+                                              username: userData.username,
+                                              profilePicture: userData.profilePicture || "/public/poze/default-avatar.png"
+                                          });
+                                      } else {
+                                          albums.push(item);
+                                      }
+                                  });
+
+                                  for (const albumName of albums) {
+                                      await getAlbumPhotos(friend.id, albumName, (photosResult, statusPhotos) => {
+                                          if (statusPhotos === 200 && Array.isArray(photosResult.photos)) {
+                                              allPosts.push({
+                                                  type: "album",
+                                                  userId: friend.id,
+                                                  albumName,
+                                                  photos: photosResult.photos,
+                                                  username: userData.username,
+                                                  profilePicture: userData.profilePicture || "/public/poze/default-avatar.png"
+                                              });
+                                          }
+                                      });
+                                  }
+                              }
+                          });
+                      }
                   });
-                }
-              });
-            }
-          });
-        }
-
-        setTimeout(() => {
-          const shuffled = allPosts.sort(() => 0.5 - Math.random());
-          setPosts(shuffled);
-        }, 1000);
-      }
-    });
+              }
+              console.log(allPosts);
+              console.log()
+              setTimeout(() => {
+                const shuffled = allPosts.sort(() => 0.5 - Math.random());
+                setPosts(shuffled);
+            }, 1000);            
+          }
+      });
   }, []);
 
   return (
@@ -66,7 +93,39 @@ export default function FeedPage() {
         )}
         {posts.map((post, idx) => (
           <div className="feed-card" key={idx}>
-            <img src={post.photoUrl} alt="post" className="feed-photo" />
+            {post.type === "photo" ? (
+                <img src={post.url} alt="post" className="feed-photo" />
+            ) : (
+                <div className="feed-album">
+                    <button 
+                        className="album-nav-btn prev" 
+                        onClick={() => {
+                            const currentIndex = albumIndexes[post.albumName] || 0;
+                            const newIndex = (currentIndex === 0 ? post.photos.length - 1 : currentIndex - 1);
+                            setAlbumIndexes({ ...albumIndexes, [post.albumName]: newIndex });
+                        }}
+                    >
+                        ⬅️
+                    </button>
+
+                    <img 
+                        src={post.photos[albumIndexes[post.albumName] || 0]} 
+                        alt="album" 
+                        className="feed-photo" 
+                    />
+
+                    <button 
+                        className="album-nav-btn next" 
+                        onClick={() => {
+                            const currentIndex = albumIndexes[post.albumName] || 0;
+                            const newIndex = (currentIndex + 1) % post.photos.length;
+                            setAlbumIndexes({ ...albumIndexes, [post.albumName]: newIndex });
+                        }}
+                    >
+                        ➡️
+                    </button>
+                </div>
+            )}
             <div className="feed-right">
             <div className="feed-username" onClick={() => history.push(`/view-profile/${post.userId}`)} style={{ cursor: "pointer" }}>@{post.username}</div>
               <div className="feed-likes">❤️ 128</div>
