@@ -31,6 +31,7 @@ export default function FeedPage() {
                 if (statusPhoto === 200 && photoResult?.photos?.length > 0) {
                   photoResult.photos.forEach((photoUrl) => {
                     allPosts.push({
+                      userId: friend.id,
                       photoUrl,
                       username: userData.username,
                       profilePicture: userData.profilePicture || "/public/poze/default-avatar.png"
@@ -67,7 +68,7 @@ export default function FeedPage() {
           <div className="feed-card" key={idx}>
             <img src={post.photoUrl} alt="post" className="feed-photo" />
             <div className="feed-right">
-            <div className="feed-username"onClick={() => history.push(`/view-profile/${post.userId}`)}style={{ cursor: "pointer" }}>@{post.username}</div>
+            <div className="feed-username" onClick={() => history.push(`/view-profile/${post.userId}`)} style={{ cursor: "pointer" }}>@{post.username}</div>
               <div className="feed-likes">❤️ 128</div>
               <div className="feed-description">
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do

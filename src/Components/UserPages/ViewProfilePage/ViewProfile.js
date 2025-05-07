@@ -118,7 +118,7 @@ export default function ViewProfilePage() {
                 </div>
               </div>
             </div>
-            <span className="close-modal">✖</span>
+            <span className="close-modal" onClick={closeModal}>✖</span>
           </div>
         </div>
       )}
