@@ -252,6 +252,7 @@ export default function HomePage() {
             <div className="photo-info">
               <div className="likes">❤️ 128</div>
               <div className="desc"><b>Description:</b> Primul meu InternSHIP...💀💀💀💀💀</div>
+
               <div className="comments">
                 <h4>Comments</h4>
                 <div className="comment">
