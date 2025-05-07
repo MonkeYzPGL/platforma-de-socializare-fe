@@ -3,7 +3,7 @@ import "./Feed.css";
 import { getFriendList } from "../../API/neo-friend";
 import { getUserById, getUserPhotos } from "../../API/user-account";
 import ClickableLogo from "../../ClickableLogo";
-import SearchBar from "../../GeneralComponents/SearchBar";
+import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import { useHistory } from "react-router-dom";
 
 

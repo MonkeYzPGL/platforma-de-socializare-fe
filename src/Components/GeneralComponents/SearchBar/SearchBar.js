@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import {searchUserByUsername} from '../API/user-account';
+import {searchUserByUsername} from '../../API/user-account';
 import "./SearchBar.css";
 
 export default function SearchBar() {

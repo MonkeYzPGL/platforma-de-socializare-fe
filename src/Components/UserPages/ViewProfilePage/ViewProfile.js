@@ -4,7 +4,7 @@ import "./ViewProfile.css"
 import { useParams } from "react-router-dom";
 import { getUserById, getUserPhotos } from "../../API/user-account";
 import { useHistory } from "react-router-dom";
-import SearchBar from "../../GeneralComponents/SearchBar";
+import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
 
 export default function ViewProfilePage() {
