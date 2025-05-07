@@ -9,6 +9,7 @@ import AddPhotoPage from './Components/UserPages/AddPhotoPage/AddPhoto';
 import AdminTablePage from './Components/AdminPages/AdminTable/AdminTable';
 import ChatPage from './Components/UserPages/ChatPage/Chat';
 import EditProfilePage from './Components/UserPages/EditProfilePage/EditProfilePage';
+import FriendFeedPage from './Components/UserPages/FeedPage/Feed';
 import FirstPage from './Components/DefaultPages/FirstPage/FirstPage';
 import FriendList from './Components/UserPages/FriendListPage/FriendList';
 import HomePage from './Components/UserPages/HomePage/HomePage';
@@ -41,6 +42,7 @@ class App extends React.Component {
                         <PrivateRoute exact path='/friend-list' component={FriendList} requiredRole="user" />
                         <PrivateRoute exact path="/pending-requests" component={PendingRequests} requiredRole="user" />
                         <PrivateRoute exact path="/add-photo" component={AddPhotoPage} requiredRole="user" />
+                        <PrivateRoute exact path="/feed" component={FriendFeedPage} requiredRole="user" />
 
                         <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />

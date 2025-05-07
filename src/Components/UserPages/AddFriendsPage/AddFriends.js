@@ -84,7 +84,7 @@ export default function AddFriendPage() {
   
   return (
     <div className="add-friend-page">
-      <ClickableLogo className="logo" />
+      <ClickableLogo className="admin-logo" disableNavigation={true} />
       <div className="friend-container">
       <input
             className="search-input"

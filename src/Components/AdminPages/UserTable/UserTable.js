@@ -94,7 +94,7 @@ const UserTablePage = () => {
 
     return (
         <div className="user-table-container">
-            <ClickableLogo className="admin-logo"/>
+            <ClickableLogo className="admin-logo" disableNavigation={true} />
 
             <div className="admin-buttons">
                 <Button 

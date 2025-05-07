@@ -1,0 +1,122 @@
+.feed-page {
+    width: 100%;
+    min-height: 100vh;
+    background: linear-gradient(193.33deg, rgba(79, 249, 187, 0.69) 9.58%, rgba(13, 80, 195, 0.69) 51.15%, rgba(29, 102, 110, 0.69) 92.72%);
+    padding: 40px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .feed-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 40px;
+  }
+  
+  .feed-card {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    min-height: 320px;
+  }
+  
+  .feed-photo {
+    width: 50%;
+    object-fit: cover;
+  }
+  
+  .feed-right {
+    width: 50%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .feed-username {
+    font-weight: bold;
+    color: #3495c1;
+  }
+  
+  .feed-likes {
+    color: red;
+  }
+  
+  .feed-description {
+    font-size: 14px;
+    color: #333;
+    text-align: justify;
+  }
+  
+  .feed-comment-input {
+    padding: 6px 10px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  
+  .feed-comment-button {
+    margin-top: 4px;
+    padding: 6px 12px;
+    background: #3495c1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: not-allowed;
+  }
+  
+  .feed-comments {
+    margin-top: 10px;
+    font-size: 13px;
+    color: #555;
+    max-height: 100px;
+    overflow-y: auto;
+  }
+  
+  .feed-comments .comment {
+    margin-bottom: 6px;
+  }
+
+  .no-friends-message {
+    background: white;
+    padding: 30px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    margin: 40px auto;
+    max-width: 600px;
+  }
+  
+  .no-friends-message p {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  .add-friends-button {
+    padding: 10px 20px;
+    background: #3495c1;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .add-friends-button:hover {
+    background: #2b7aa3;
+  }
+  
+  
