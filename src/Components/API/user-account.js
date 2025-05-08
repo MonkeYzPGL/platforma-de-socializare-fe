@@ -270,6 +270,86 @@ function deleteUserPhoto(userId, photoTitle, callback) {
     });
 }
 
+function uploadPhotoToAlbum(userId, albumName, photoName, file, callback) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const request = new Request(`${HOST.user_api}/album/${userId}/${albumName}/${photoName}`, {
+        method: 'PUT',
+        body: formData
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log(`Photo '${photoName}' uploaded successfully to album '${albumName}' for user ID: ${userId}`);
+        } else if (status === 204) {
+            console.log(`User not found for ID: ${userId}`);
+        } else {
+            console.log(`Failed to upload photo '${photoName}' to album '${albumName}'`);
+        }
+        callback(result, status, error);
+    });
+}
+
+function getUserAlbums(userId, callback) {
+    const request = new Request(`${HOST.user_api}/album/${userId}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log(`Fetched albums for user ID: ${userId}`);
+        } else if (status === 204) {
+            console.log(`No albums found for user ID: ${userId}`);
+        } else {
+            console.log(`Failed to fetch albums for user ID: ${userId}`);
+        }
+        callback(result, status, error);
+    });
+}
+
+function getAlbumPhotos(userId, albumName, callback) {
+    const request = new Request(`${HOST.user_api}/album/${userId}/${albumName}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log(`Fetched photos from album '${albumName}' for user ID: ${userId}`);
+        } else if (status === 204) {
+            console.log(`No photos found in album '${albumName}' for user ID: ${userId}`);
+        } else {
+            console.log(`Failed to fetch photos from album '${albumName}' for user ID: ${userId}`);
+        }
+        callback(result, status, error);
+    });
+}
+
+function deleteUserAlbum(userId, albumName, callback) {
+    const request = new Request(`${HOST.user_api}/album/${userId}/${albumName}`, {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log(`Album '${albumName}' deleted successfully for user ID: ${userId}`);
+        } else if (status === 204) {
+            console.log(`User not found for ID: ${userId}`);
+        } else if (status === 500) {
+            console.log(`Failed to delete album '${albumName}' for user ID: ${userId}`);
+        }
+        callback(result, status, error);
+    });
+}
 
 export {
     userLogin,
@@ -285,5 +365,9 @@ export {
     deleteProfilePicture,
     uploadUserPhoto,
     getUserPhotos,
-    deleteUserPhoto 
+    deleteUserPhoto,
+    uploadPhotoToAlbum,
+    getUserAlbums, 
+    getAlbumPhotos, 
+    deleteUserAlbum
 };

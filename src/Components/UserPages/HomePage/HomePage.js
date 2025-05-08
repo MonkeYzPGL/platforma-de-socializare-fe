@@ -4,9 +4,9 @@ import { useHistory } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
-import SearchBar from "../../GeneralComponents/SearchBar";
+import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
-import { uploadProfilePicture, deleteProfilePicture, getUserPhotos, deleteUserPhoto } from "../../API/user-account";
+import { uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums } from "../../API/user-account";
 
 export default function HomePage() {
 
@@ -19,29 +19,54 @@ export default function HomePage() {
   const [pendingFile, setPendingFile] = useState(null);
   const [userPhotos, setUserPhotos] = useState([]);
   const [activePhoto, setActivePhoto] = useState(null);
+  const [albums, setAlbums] = useState([]);
+  const [activeAlbum, setActiveAlbum] = useState(null);
+  const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
+
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
 
-    if (storedUser) {
-      setUser(storedUser);
+      if (storedUser) {
+        setUser(storedUser);
 
-      getFriendList(storedUser.id, (result, status, error) => {
-        if (status === 200 && result) setFriends(result);
-      });
+        getFriendList(storedUser.id, (result, status, error) => {
+          if (status === 200 && result) setFriends(result);
+        });
 
-      getPendingRequests(storedUser.id, (result, status, error) => {
-        if (status === 200 && Array.isArray(result)) setPendingRequests(result);
-      });
+        getPendingRequests(storedUser.id, (result, status, error) => {
+          if (status === 200 && Array.isArray(result)) setPendingRequests(result);
+        });
 
-      getUserPhotos(storedUser.id, (result, status, error) => {
-        if (status === 200 && result?.photos) {
-          setUserPhotos(result.photos);
-        } else {
-          setUserPhotos([]);
-        }
-      });
-    }
+        getUserAlbums(storedUser.id, (result, status, error) => {
+          if (status === 200 && Array.isArray(result.albums)) {
+            const individualPhotos = [];
+            const albums = [];
+
+            result.albums.forEach(item => {
+              if (item.endsWith(".png")) {
+                individualPhotos.push(`https://platforma-de-socializare-image-pool.s3.eu-north-1.amazonaws.com/${storedUser.id}/${item}`);
+              } else {
+                albums.push({
+                  name: item,
+                  photos: []
+                });
+              }
+            });
+            setUserPhotos(individualPhotos);
+
+            albums.forEach((album, index) => {
+              getAlbumPhotos(storedUser.id, album.name, (photosResult, photoStatus, photoError) => {
+                if (photoStatus === 200 && Array.isArray(photosResult.photos)) {
+                  albums[index].photos = photosResult.photos;
+                  setAlbums([...albums]);
+                }
+              });
+            });
+          }
+        });
+
+      }
   }, []);
 
   const handleDeletePhoto = (photoUrl) => {
@@ -225,23 +250,40 @@ export default function HomePage() {
       </div>
 
       <div className="homepage-photo-gallery">
-        {userPhotos.length > 0 ? (
-          userPhotos.map((photoUrl, idx) => (
+          {/* Afiseaza poze individuale */}
+          {userPhotos.length > 0 && userPhotos.map((photoUrl, idx) => (
+              <div key={idx} className="homepage-photo-wrapper">
+                  <div
+                      className="homepage-photo"
+                      style={{ backgroundImage: `url(${photoUrl})` }}
+                      onClick={() => handlePhotoClick(photoUrl)}
+                  ></div>
+              </div>
+          ))}
+
+          {/* Afiseaza albume */}
+          {albums.length > 0 && albums.map((album, idx) => (
             <div key={idx} className="homepage-photo-wrapper">
-              <div
-                className="homepage-photo"
-                style={{ backgroundImage: `url(${photoUrl})` }}
-                onClick={() => handlePhotoClick(photoUrl)}
-              ></div>
+                <div
+                    className="homepage-photo"
+                    style={{ backgroundImage: `url(${album.photos[0]})` }}
+                    onClick={() => {
+                        setActiveAlbum(album);
+                        setActiveAlbumIndex(0);
+                    }}
+                ></div>
+                <p className="album-name">{album.name}</p>
             </div>
-          ))
-        ) : (
-          <div className="no-photos-message">
-            <img src="/public/poze/no-photos-icon.png" alt="No Photos" />
-            <p>This space is so boring...<br />Maybe add some photos?</p>
-          </div>
-        )}
+        ))}
+          {/* Mesaj daca nu exista poze sau albume */}
+          {userPhotos.length === 0 && albums.length === 0 && (
+              <div className="no-photos-message">
+                  <img src="/public/poze/no-photos-icon.png" alt="No Photos" />
+                  <p>This space is so boring...<br />Maybe add some photos?</p>
+              </div>
+          )}
       </div>
+
       {activePhoto && (
         <div className="photo-modal-overlay" onClick={closeModal}>
           <div className="photo-modal" onClick={e => e.stopPropagation()}>
@@ -267,6 +309,43 @@ export default function HomePage() {
             <span className="close-modal" onClick={closeModal}>✖</span>
           </div>
         </div>
+      )}
+        {activeAlbum && (
+          <div className="photo-modal-overlay" onClick={() => setActiveAlbum(null)}>
+              <div className="photo-modal" onClick={(e) => e.stopPropagation()}>
+                  <button className="delete-photo-btn" onClick={() => setActiveAlbum(null)}>
+                      ✖
+                  </button>
+                  <button 
+                      className="album-nav-btn prev" 
+                      onClick={() => setActiveAlbumIndex((prevIndex) => (prevIndex === 0 ? activeAlbum.photos.length - 1 : prevIndex - 1))}
+                  >
+                      ⬅️
+                  </button>
+                  <img src={activeAlbum.photos[activeAlbumIndex]} alt="Album" />
+                  <button 
+                      className="album-nav-btn next" 
+                      onClick={() => setActiveAlbumIndex((prevIndex) => (prevIndex + 1) % activeAlbum.photos.length)}
+                  >
+                      ➡️
+                  </button>
+                  <div className="photo-info">
+                      <div className="likes">❤️ 128</div>
+                      <div className="desc"><b>Description:</b> {activeAlbum.name}</div>
+                      <div className="comments">
+                          <h4>Comments</h4>
+                          <div className="comment">
+                              <img src="/public/poze/default-avatar.png" alt="avatar" />
+                              <span><b>sampleUser:</b> Super album!</span>
+                          </div>
+                          <div className="comment">
+                              <img src="/public/poze/default-avatar.png" alt="avatar" />
+                              <span><b>sampleUser:</b> Poze foarte frumoase!</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
       )}
     </div>
   );
