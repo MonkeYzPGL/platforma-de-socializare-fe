@@ -48,8 +48,8 @@ class App extends React.Component {
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />
 
                         <Route exact path="/chat" render={() => <ChatPage />} />
-
-                        <Route render={() => <NotFoundPage />} />
+    
+                        <PrivateRoute exact path='/chat/:user2' component={ChatPage} requiredRole="user" />
                     </Switch>
 
                 </div>

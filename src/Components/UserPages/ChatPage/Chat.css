@@ -1,12 +1,15 @@
 .chat-page {
-    max-width: 600px;
-    height: 100vh;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    background-color: #f0f2f5;
-    font-family: Arial, sans-serif;
-  }
+  max-width: 600px;
+  height: 100vh;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f2f5;
+  font-family: Arial, sans-serif;
+  background: url('/public/poze/chat.png') center top no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}
   
   .chat-header {
     display: flex;
@@ -113,4 +116,18 @@
     margin-left: 10px;
     cursor: pointer;
   }
+  
+  .typing-indicator .message-text {
+    font-style: italic;
+    color: #888;
+  }
+  
+  .emoji-picker-container {
+    position: absolute;
+    bottom: 60px;
+    left: 50px;
+    z-index: 1000;
+  }
+  
+ 
   
