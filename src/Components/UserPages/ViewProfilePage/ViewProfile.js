@@ -18,7 +18,7 @@ export default function ViewProfilePage() {
   const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
 
   const handleMessageClick = () => {
-    history.push(`/send-message/${user.id}`);
+    history.push(`/chat/${user.username}`);
   };
 
   useEffect(() => {
