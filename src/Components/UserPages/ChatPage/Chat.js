@@ -152,7 +152,9 @@ export default function ChatPage() {
             className={`chat-message ${msg.senderId === user1Id ? "me" : "other"}`}
           >
             <div className="message-text">{msg.content}</div>
-            <div className="message-time">{msg.timestamp.slice(11, 16)}</div>
+            <div className="message-time">
+              {new Date(new Date(msg.timestamp).getTime() + 3 * 60 * 60 * 1000).toISOString().slice(11, 16)}
+            </div>
           </div>
         ))}
 

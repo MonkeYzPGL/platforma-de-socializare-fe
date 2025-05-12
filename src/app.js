@@ -50,6 +50,7 @@ class App extends React.Component {
                         <Route exact path="/chat" render={() => <ChatPage />} />
     
                         <PrivateRoute exact path='/chat/:user2' component={ChatPage} requiredRole="user" />
+                        <Route render={() => <NotFoundPage />} />
                     </Switch>
 
                 </div>
