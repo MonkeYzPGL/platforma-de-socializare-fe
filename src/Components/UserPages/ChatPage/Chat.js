@@ -138,25 +138,46 @@ export default function ChatPage() {
       </div>
 
       <div className="chat-messages">
-        <div className="chat-date-separator">{new Date().toLocaleDateString()}</div>
-
+        
         {messages.length === 0 && (
           <div className="no-messages-placeholder">
             Start a conversation with <strong>{user2Username}</strong> 📩
           </div>
         )}
 
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`chat-message ${msg.senderId === user1Id ? "me" : "other"}`}
-          >
-            <div className="message-text">{msg.content}</div>
-            <div className="message-time">
-              {new Date(new Date(msg.timestamp).getTime() + 3 * 60 * 60 * 1000).toISOString().slice(11, 16)}
-            </div>
-          </div>
-        ))}
+        {messages.map((msg, idx) => {
+  const currentDate = new Date(msg.timestamp);
+  const previousDate =
+    idx > 0 ? new Date(messages[idx - 1].timestamp) : null;
+
+  const showDateSeparator =
+    !previousDate || currentDate.toDateString() !== previousDate.toDateString();
+
+  return (
+    <React.Fragment key={idx}>
+      {showDateSeparator && (
+        <div className="chat-date-separator">
+          {currentDate.toLocaleDateString()}
+        </div>
+      )}
+      <div
+        className={`chat-message ${
+          msg.senderId === user1Id ? "me" : "other"
+        }`}
+      >
+        <div className="message-text">{msg.content}</div>
+        <div className="message-time">
+          {new Date(
+            new Date(msg.timestamp).getTime() + 3 * 60 * 60 * 1000
+          )
+            .toISOString()
+            .slice(11, 16)}
+        </div>
+      </div>
+    </React.Fragment>
+  );
+})}
+
 
         <div ref={messagesEndRef} />
       </div>
