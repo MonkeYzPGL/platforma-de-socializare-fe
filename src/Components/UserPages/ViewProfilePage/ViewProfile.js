@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "../HomePage/HomePage.css";
 import "./ViewProfile.css"
-import { useParams } from "react-router-dom";
-import { getUserById, getUserPhotos } from "../../API/user-account";
-import { useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
+import { getUserById, getUserPhotos, getPostByImageUrl } from "../../API/user-account";
+import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
 
@@ -16,9 +16,33 @@ export default function ViewProfilePage() {
   const [albums, setAlbums] = useState([]);
   const [activeAlbum, setActiveAlbum] = useState(null);
   const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
+  const [activePhotoPostId, setActivePhotoPostId] = useState(null);
+  const [activeAlbumPostId, setActiveAlbumPostId] = useState(null);
+
+  const [likesMap, setLikesMap] = useState({});
+  const [commentsMap, setCommentsMap] = useState({});
+  const [newComment, setNewComment] = useState({});
+  const [likedPosts, setLikedPosts] = useState(new Set());
+
+  const currentUser = JSON.parse(localStorage.getItem("user")) || {};
+
+  const [usernamesById, setUsernamesById] = useState({});
+
+  const fetchUsernameIfNeeded = (userId) => {
+    if (!userId || usernamesById[userId]) return;
+
+    getUserById(userId, (res, status) => {
+      if (status === 200 && res.username) {
+        setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
+      }
+    });
+  };
+
 
   const handleMessageClick = () => {
-    history.push(`/chat/${user.username}`);
+    if (user?.username) {
+      history.push(`/chat/${user.username}`);
+    }
   };
 
   useEffect(() => {
@@ -34,60 +58,154 @@ export default function ViewProfilePage() {
   }, [id]);
 
   useEffect(() => {
-      if (id) {
-          getUserPhotos(id, (result, status) => {
-              if (status === 200 && result?.photos) {
-                  const individualPhotos = [];
-                  const tempAlbums = {};
+    if (id) {
+      getUserPhotos(id, (result, status) => {
+        if (status === 200 && result?.photos) {
+          const individualPhotos = [];
+          const tempAlbums = {};
 
-                  result.photos.forEach(item => {
-                      const pathParts = item.split(`/${id}/`)[1];
-                      
-                      if (pathParts.includes("/")) {
-                          const albumParts = pathParts.split("/");
-                          const albumName = albumParts[0];
-                          
-                          if (!tempAlbums[albumName]) {
-                              tempAlbums[albumName] = [];
-                          }
-                          
-                          tempAlbums[albumName].push(item);
-                      } else {
-                          individualPhotos.push(item);
-                      }
-                  });
-
-                  const albumsArray = Object.keys(tempAlbums).map(name => ({
-                      name,
-                      photos: tempAlbums[name]
-                  }));
-
-                  setUserPhotos(individualPhotos);
-                  setAlbums(albumsArray);
-
-                  console.log("Poze:", individualPhotos);
-                  console.log("Albume:", albumsArray);
-              } else {
-                  setUserPhotos([]);
-                  setAlbums([]);
-              }
+          result.photos.forEach(item => {
+            const pathParts = item.split(`/${id}/`)[1];
+            if (!pathParts) return;
+            if (pathParts.includes("/")) {
+              const albumParts = pathParts.split("/");
+              const albumName = albumParts[0];
+              if (!tempAlbums[albumName]) tempAlbums[albumName] = [];
+              tempAlbums[albumName].push(item);
+            } else {
+              individualPhotos.push(item);
+            }
           });
-      }
+
+          const albumsArray = Object.keys(tempAlbums).map(name => ({
+            name,
+            photos: tempAlbums[name]
+          }));
+
+          setUserPhotos(individualPhotos);
+          setAlbums(albumsArray);
+        } else {
+          setUserPhotos([]);
+          setAlbums([]);
+        }
+      });
+    }
   }, [id]);
 
-  const handlePhotoClick = (url) => {
-    setActivePhoto(url);
+  const fetchLikesAndComments = (postId) => {
+    console.log("📥 fetchLikesAndComments for postId:", postId);
+
+    getLikes(postId, (res, status) => {
+      console.log("👍 Likes response:", res, "status:", status);
+      if (status === 200 && Array.isArray(res)) {
+        setLikesMap(prev => ({ ...prev, [postId]: res }));
+        const updated = new Set(likedPosts);
+        res.find(u => u.id === currentUser.id) ? updated.add(postId) : updated.delete(postId);
+        setLikedPosts(updated);
+      }
+    });
+
+    getComments(postId, (res, status) => {
+      console.log("💬 Comments response:", res, "status:", status);
+      if (status === 200) {
+        setCommentsMap(prev => ({ ...prev, [postId]: res }));
+      }
+    });
   };
+
+  const handlePhotoClick = (url) => {
+    getPostByImageUrl(url, (post, status) => {
+      if (status === 200 && post?.id) {
+        const postId = post.id;
+        console.log("✅ handlePhotoClick - postId:", postId);
+        setActivePhoto(url);
+        setActivePhotoPostId(postId);
+        fetchLikesAndComments(postId);
+      } else {
+        console.error("❌ Nu s-a găsit postarea pentru imaginea:", url);
+      }
+    });
+  };
+
+  const handleAlbumPhotoClick = (url) => {
+    getPostByImageUrl(url, (post, status) => {
+      if (status === 200 && post?.id) {
+        const postId = post.id;
+        console.log("✅ handleAlbumPhotoClick - postId:", postId);
+        setActivePhoto(url);
+        setActiveAlbumPostId(postId);
+        fetchLikesAndComments(postId);
+      } else {
+        console.error("❌ Nu s-a găsit postarea pentru imaginea:", url);
+      }
+    });
+  };
+
+  const handleToggleLike = (postId) => {
+    if (!postId || !currentUser.id) return;
+
+    const isLiked = likedPosts.has(postId);
+    const toggle = isLiked ? unlikePost : likePost;
+
+    toggle(currentUser.id, postId, (_, status) => {
+      if (status === 200 || status === 201) {
+        getLikes(postId, (res, status) => {
+          if (status === 200 && Array.isArray(res)) {
+            const updated = new Set(likedPosts);
+            res.find(u => u.id === currentUser.id) ? updated.add(postId) : updated.delete(postId);
+            setLikesMap(prev => ({ ...prev, [postId]: res }));
+            setLikedPosts(updated);
+          }
+        });
+      } else {
+        console.error("❌ Eroare la like/unlike:", status);
+      }
+    });
+  };
+
+  const handleAddComment = (postId) => {
+    const content = newComment[postId];
+    const userId = currentUser?.id;
+
+    if (!postId || !content?.trim()) return;
+
+    addComment(userId, postId, content, (_, status) => {
+      if (status === 200 || status === 201) {
+        getComments(postId, (res, status) => {
+          if (status === 200) {
+            setCommentsMap(prev => ({ ...prev, [postId]: res }));
+            setNewComment(prev => ({ ...prev, [postId]: "" }));
+          }
+        });
+      } else {
+        console.error("❌ Eroare la addComment, status:", status);
+      }
+    });
+  };
+
+  const getCommentValue = (postId) => newComment[postId] || "";
+
   const closeModal = () => {
     setActivePhoto(null);
+    setActivePhotoPostId(null);
+    setActiveAlbum(null);             
+    setActiveAlbumPostId(null);       
   };
-  
+
+
+  const closeAlbumModal = () => {
+  setActiveAlbum(null);
+  setActiveAlbumPostId(null);
+  setActivePhoto(null);             
+  setActivePhotoPostId(null);      
+};
+
+
   return (
     <div className="homepage-container">
-      <SearchBar/>
+      <SearchBar />
       <div className="homepage-profile-header">
         <ClickableLogo className="homepage-logo" />
-
         <div className="homepage-profile-main">
           <div className="homepage-profile-info">
             <div className="homepage-profile-pic">
@@ -105,9 +223,7 @@ export default function ViewProfilePage() {
                 {user ? user.email : "Loading..."}
               </h2>
               <p className="homepage-description">
-                {user?.description?.trim()
-                  ? user.description
-                  : "This user has no description."}
+                {user?.description?.trim() ? user.description : "This user has no description."}
               </p>
             </div>
             <button className="message-button" title="Send Message" onClick={handleMessageClick}>
@@ -119,99 +235,144 @@ export default function ViewProfilePage() {
       </div>
 
       <div className="homepage-photo-gallery">
-        {userPhotos.length > 0 && userPhotos.map((photoUrl, idx) => (
-            <div key={idx} className="homepage-photo-wrapper">
-                <div
-                    className="homepage-photo"
-                    style={{ backgroundImage: `url(${photoUrl})` }}
-                    onClick={() => handlePhotoClick(photoUrl)}
-                ></div>
-            </div>
+        {userPhotos.map((photoUrl, idx) => (
+          <div key={idx} className="homepage-photo-wrapper">
+            <div
+              className="homepage-photo"
+              style={{ backgroundImage: `url(${photoUrl})` }}
+              onClick={() => handlePhotoClick(photoUrl)}
+            ></div>
+          </div>
         ))}
 
-        {albums.length > 0 && albums.map((album, idx) => (
-            <div key={idx} className="homepage-photo-wrapper">
-                <div
-                    className="homepage-photo"
-                    style={{ backgroundImage: `url(${album.photos[0]})` }}
-                    onClick={() => {
-                        setActiveAlbum(album);
-                        setActiveAlbumIndex(0);
-                    }}
-                ></div>
-                <p className="album-name">{album.name}</p>
-            </div>
+        {albums.map((album, idx) => (
+          <div key={idx} className="homepage-photo-wrapper">
+            <div
+              className="homepage-photo"
+              style={{ backgroundImage: `url(${album.photos[0]})` }}
+              onClick={() => {
+                setActiveAlbum(album);
+                setActiveAlbumIndex(0);
+                handleAlbumPhotoClick(album.photos[0]);
+              }}
+            ></div>
+            <p className="album-name">{album.name}</p>
+          </div>
         ))}
 
         {userPhotos.length === 0 && albums.length === 0 && (
-            <div className="no-photos-message">
-                <img src="/public/poze/no-photos-icon.png" alt="No Photos" />
-                <p>This space is so boring...<br />Maybe add some photos?</p>
-            </div>
+          <div className="no-photos-message">
+            <img src="/public/poze/no-photos-icon.png" alt="No Photos" />
+            <p>This space is so boring...<br />Maybe add some photos?</p>
+          </div>
         )}
       </div>
 
       {activePhoto && (
         <div className="photo-modal-overlay" onClick={closeModal}>
           <div className="photo-modal" onClick={(e) => e.stopPropagation()}>
+            <span className="close-modal" onClick={closeModal}>✖</span>
             <img src={activePhoto} alt="Expanded" />
             <div className="photo-info">
-              <div className="likes">❤️ 128</div>
-              <div className="desc"><b>Description:</b> Aceasta este o fotografie postată de utilizator.</div>
+              <div className="likes" style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+                <button onClick={() => handleToggleLike(activePhotoPostId)}>
+                  {likedPosts.has(activePhotoPostId) ? "💔 Unlike" : "❤️ Like"}
+                </button>
+                <span>Total: {likesMap[activePhotoPostId]?.length || 0}</span>
+              </div>
+              <div className="desc"><b>Description:</b> Poza adăugată de utilizator</div>
               <div className="comments">
                 <h4>Comments</h4>
-                <div className="comment">
-                  <img src="/public/poze/default-avatar.png" alt="avatar" />
-                  <span><b>sampleUser:</b> Super poza!</span>
-                </div>
-                <div className="comment">
-                  <img src="/public/poze/default-avatar.png" alt="avatar" />
-                  <span><b>sampleUser:</b> Mi-a placut vibe-ul!</span>
+                {(commentsMap[activePhotoPostId] || []).reverse().map((c, i) => {
+                  const userId = c.userId;
+                  fetchUsernameIfNeeded(userId);
+                  const username = usernamesById[userId] || "...";
+                  return (
+                    <div key={i} className="comment">
+                      <span><b>@{username}</b>: {c.content}</span>
+                    </div>
+                  );
+                })}
+                <div className="add-comment" style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "10px" }}>
+                  <input
+                    type="text"
+                    placeholder="Write a comment..."
+                    style={{ flex: "1", minWidth: "200px" }}
+                    value={getCommentValue(activePhotoPostId)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewComment(prev => ({ ...prev, [activePhotoPostId]: value }));
+                    }}
+                  />
+                  <button onClick={() => handleAddComment(activePhotoPostId)}>➕</button>
                 </div>
               </div>
             </div>
-            <span className="close-modal">✖</span>
           </div>
         </div>
       )}
 
-{activeAlbum && (
-    <div className="photo-modal-overlay" onClick={() => setActiveAlbum(null)}>
-        <div className="photo-modal" onClick={(e) => e.stopPropagation()}>
-            <button className="delete-photo-btn" onClick={() => setActiveAlbum(null)}>
-                ✖
-            </button>
-            <button 
-                className="album-nav-btn prev" 
-                onClick={() => setActiveAlbumIndex((prevIndex) => (prevIndex === 0 ? activeAlbum.photos.length - 1 : prevIndex - 1))}
-            >
-                ⬅️
-            </button>
+      {activeAlbum && (
+        <div className="photo-modal-overlay" onClick={closeAlbumModal}>
+          <div className="photo-modal" onClick={(e) => e.stopPropagation()}>
+            <span className="close-modal" onClick={closeAlbumModal}>✖</span>
+
+            <button className="album-nav-btn prev" onClick={() => {
+              const prevIdx = activeAlbumIndex === 0 ? activeAlbum.photos.length - 1 : activeAlbumIndex - 1;
+              const prevPhoto = activeAlbum.photos[prevIdx];
+              setActiveAlbumIndex(prevIdx);
+              handleAlbumPhotoClick(prevPhoto);
+            }}>⬅️</button>
+
             <img src={activeAlbum.photos[activeAlbumIndex]} alt="Album" />
-            <button 
-                className="album-nav-btn next" 
-                onClick={() => setActiveAlbumIndex((prevIndex) => (prevIndex + 1) % activeAlbum.photos.length)}
-            >
-                ➡️
-            </button>
+
+            <button className="album-nav-btn next" onClick={() => {
+              const nextIdx = (activeAlbumIndex + 1) % activeAlbum.photos.length;
+              const nextPhoto = activeAlbum.photos[nextIdx];
+              setActiveAlbumIndex(nextIdx);
+              handleAlbumPhotoClick(nextPhoto);
+            }}>➡️</button>
+
             <div className="photo-info">
-                <div className="likes">❤️ 128</div>
-                <div className="desc"><b>Description:</b> {activeAlbum.name}</div>
-                <div className="comments">
-                    <h4>Comments</h4>
-                    <div className="comment">
-                        <img src="/public/poze/default-avatar.png" alt="avatar" />
-                        <span><b>sampleUser:</b> Super album!</span>
+              <div className="likes" style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                <button onClick={() => handleToggleLike(activeAlbumPostId)}>
+                  {likedPosts.has(activeAlbumPostId) ? "💔 Unlike" : "❤️ Like"}
+                </button>
+                <span>Total: {likesMap[activeAlbumPostId]?.length || 0}</span>
+              </div>
+              <div className="desc"><b>Description:</b> {activeAlbum.name}</div>
+              <div className="comments">
+                <h4>Comments</h4>
+                {(commentsMap[activeAlbumPostId] || []).reverse().map((c, i) => {
+                  const userId = c.userId;
+                  fetchUsernameIfNeeded(userId);
+                  const username = usernamesById[userId] || "...";
+                  return (
+                    <div key={i} className="comment">
+                      <span><b>@{username}</b>: {c.content}</span>
                     </div>
-                    <div className="comment">
-                        <img src="/public/poze/default-avatar.png" alt="avatar" />
-                        <span><b>sampleUser:</b> Poze foarte frumoase!</span>
-                    </div>
+                  );
+                })}
+
+                <div className="add-comment" style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "10px" }}>
+                  <input
+                    type="text"
+                    placeholder="Write a comment..."
+                    style={{ flex: "1", minWidth: "200px" }}
+                    value={getCommentValue(activeAlbumPostId)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewComment(prev => ({ ...prev, [activeAlbumPostId]: value }));
+                    }}
+                  />
+                  <button onClick={() => handleAddComment(activeAlbumPostId)}>➕</button>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
-    </div>
-)}
+      )}
+
     </div>
   );
 }

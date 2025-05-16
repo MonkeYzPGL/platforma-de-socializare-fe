@@ -351,6 +351,27 @@ function deleteUserAlbum(userId, albumName, callback) {
     });
 }
 
+function getPostByImageUrl(imageUrl, callback) {
+    const encodedUrl = encodeURIComponent(imageUrl);
+
+    const request = new Request(`${HOST.user_api}/postPhoto?imageUrl=${encodedUrl}`, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json'
+        }
+    });
+
+    RestApiClient.performRequest(request, (result, status, error) => {
+        if (status === 200) {
+            console.log("Fetched post by image URL from:", request.url);
+        } else {
+            console.warn("Failed to fetch post for image URL:", imageUrl);
+        }
+        callback(result, status, error);
+    });
+}
+
+
 export {
     userLogin,
     signup,
@@ -369,5 +390,6 @@ export {
     uploadPhotoToAlbum,
     getUserAlbums, 
     getAlbumPhotos, 
-    deleteUserAlbum
+    deleteUserAlbum,
+    getPostByImageUrl
 };

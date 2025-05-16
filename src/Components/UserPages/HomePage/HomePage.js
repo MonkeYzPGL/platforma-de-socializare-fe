@@ -6,7 +6,8 @@ import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
-import { uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums } from "../../API/user-account";
+import { uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums, getPostByImageUrl, getUserById } from "../../API/user-account";
+import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
 
 export default function HomePage() {
 
@@ -20,54 +21,140 @@ export default function HomePage() {
   const [userPhotos, setUserPhotos] = useState([]);
   const [activePhoto, setActivePhoto] = useState(null);
   const [albums, setAlbums] = useState([]);
+  const [activePhotoPostId, setActivePhotoPostId] = useState(null);
   const [activeAlbum, setActiveAlbum] = useState(null);
   const [activeAlbumIndex, setActiveAlbumIndex] = useState(0);
+  const [activeAlbumPostId, setActiveAlbumPostId] = useState(null);;
 
+  const [likesMap, setLikesMap] = useState({});
+  const [commentsMap, setCommentsMap] = useState({});
+  const [newComment, setNewComment] = useState({});
+  const [likedPosts, setLikedPosts] = useState(new Set());
+
+  const [usernamesById, setUsernamesById] = useState({});
+  
+    const fetchUsernameIfNeeded = (userId) => {
+      if (!userId || usernamesById[userId]) return;
+  
+      getUserById(userId, (res, status) => {
+        if (status === 200 && res.username) {
+          setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
+        }
+      });
+    };
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+      getFriendList(storedUser.id, (res, status) => status === 200 && setFriends(res));
+      getPendingRequests(storedUser.id, (res, status) => status === 200 && setPendingRequests(res));
 
-      if (storedUser) {
-        setUser(storedUser);
-
-        getFriendList(storedUser.id, (result, status, error) => {
-          if (status === 200 && result) setFriends(result);
-        });
-
-        getPendingRequests(storedUser.id, (result, status, error) => {
-          if (status === 200 && Array.isArray(result)) setPendingRequests(result);
-        });
-
-        getUserAlbums(storedUser.id, (result, status, error) => {
-          if (status === 200 && Array.isArray(result.albums)) {
-            const individualPhotos = [];
-            const albums = [];
-
-            result.albums.forEach(item => {
-              if (item.endsWith(".png")) {
-                individualPhotos.push(`https://platforma-de-socializare-image-pool.s3.eu-north-1.amazonaws.com/${storedUser.id}/${item}`);
-              } else {
-                albums.push({
-                  name: item,
-                  photos: []
-                });
+      getUserAlbums(storedUser.id, (res, status) => {
+        if (status === 200 && Array.isArray(res.albums)) {
+          const photos = [], albumsArr = [];
+          res.albums.forEach(item => {
+            if (item.endsWith(".png")) {
+              photos.push(`https://platforma-de-socializare-image-pool.s3.eu-north-1.amazonaws.com/${storedUser.id}/${item}`);
+            } else {
+              albumsArr.push({ name: item, photos: [] });
+            }
+          });
+          setUserPhotos(photos);
+          setAlbums(albumsArr);
+          albumsArr.forEach((album, idx) => {
+            getAlbumPhotos(storedUser.id, album.name, (res, status) => {
+              if (status === 200) {
+                albumsArr[idx].photos = res.photos;
+                setAlbums([...albumsArr]);
               }
             });
-            setUserPhotos(individualPhotos);
+          });
+        }
+      });
+    }
+  }, []);
 
-            albums.forEach((album, index) => {
-              getAlbumPhotos(storedUser.id, album.name, (photosResult, photoStatus, photoError) => {
-                if (photoStatus === 200 && Array.isArray(photosResult.photos)) {
-                  albums[index].photos = photosResult.photos;
-                  setAlbums([...albums]);
-                }
-              });
-            });
+  const fetchLikesAndComments = (postId) => {
+    getLikes(postId, (res, status) => {
+      if (status === 200) {
+        setLikesMap(prev => ({ ...prev, [postId]: res }));
+        const updated = new Set(likedPosts);
+        res.find(u => u.id === user.id) ? updated.add(postId) : updated.delete(postId);
+        setLikedPosts(updated);
+      }
+    });
+    getComments(postId, (res, status) => status === 200 && setCommentsMap(prev => ({ ...prev, [postId]: res })));
+  };
+
+  const handlePhotoClick = (url) => {
+    setActivePhoto(url);
+    getPostByImageUrl(url, (post, status) => {
+      if (status === 200) {
+        setActivePhotoPostId(post.id);
+        fetchLikesAndComments(post.id);
+      }
+    });
+  };
+
+  const handleAlbumPhotoClick = (url, album, index) => {
+  setActiveAlbum(album);
+  setActiveAlbumIndex(index);
+  setActivePhoto(null); // ← asigură-te că modalul de poză NU se activează
+  getPostByImageUrl(url, (post, status) => {
+    if (status === 200) {
+      setActiveAlbumPostId(post.id);
+      fetchLikesAndComments(post.id);
+    }
+  });
+};
+
+
+  const handleToggleLike = (postId) => {
+    const isLiked = likedPosts.has(postId);
+    const toggle = isLiked ? unlikePost : likePost;
+    toggle(user.id, postId, (_, status) => {
+      if (status === 200 || status === 201) {
+        getLikes(postId, (res, status) => {
+          if (status === 200) {
+            const updated = new Set(likedPosts);
+            res.find(u => u.id === user.id) ? updated.add(postId) : updated.delete(postId);
+            setLikesMap(prev => ({ ...prev, [postId]: res }));
+            setLikedPosts(updated);
           }
         });
-
       }
-  }, []);
+    });
+  };
+
+  const handleAddComment = (postId) => {
+    const content = newComment[postId];
+    if (!content?.trim()) return;
+    addComment(user.id, postId, content, (_, status) => {
+      if (status === 200 || status === 201) {
+        getComments(postId, (res, status) => {
+          if (status === 200) {
+            setCommentsMap(prev => ({ ...prev, [postId]: res }));
+            setNewComment(prev => ({ ...prev, [postId]: "" }));
+          }
+        });
+      }
+    });
+  };
+
+  const getCommentValue = (postId) => newComment[postId] || "";
+
+  const closeModal = () => {
+    setActivePhoto(null);
+    setActivePhotoPostId(null);
+  };
+
+  const closeAlbumModal = () => {
+    setActiveAlbum(null);
+    setActiveAlbumPostId(null);
+  };
+
+  
 
   const handleDeletePhoto = (photoUrl) => {
     const parts = photoUrl.split('/');
@@ -179,13 +266,6 @@ export default function HomePage() {
     history.push("/pending-requests");
   };
   
-  const handlePhotoClick = (photoUrl) => {
-    setActivePhoto(photoUrl);
-  };
-  
-  const closeModal = () => {
-    setActivePhoto(null);
-  };
 
   return (
     <div className="homepage-container">
@@ -262,20 +342,17 @@ export default function HomePage() {
           ))}
 
           {/* Afiseaza albume */}
-          {albums.length > 0 && albums.map((album, idx) => (
+          {albums.map((album, idx) => (
             <div key={idx} className="homepage-photo-wrapper">
-                <div
-                    className="homepage-photo"
-                    style={{ backgroundImage: `url(${album.photos[0]})` }}
-                    onClick={() => {
-                        setActiveAlbum(album);
-                        setActiveAlbumIndex(0);
-                    }}
-                ></div>
-                <p className="album-name">{album.name}</p>
+              <div className="homepage-photo" style={{ backgroundImage: `url(${album.photos[0]})` }}
+                onClick={() => {
+                  handleAlbumPhotoClick(album.photos[0], album, 0);
+                }}
+              ></div>
+              <p className="album-name">{album.name}</p>
             </div>
-        ))}
-          {/* Mesaj daca nu exista poze sau albume */}
+          ))}
+        
           {userPhotos.length === 0 && albums.length === 0 && (
               <div className="no-photos-message">
                   <img src="/public/poze/no-photos-icon.png" alt="No Photos" />
@@ -287,66 +364,120 @@ export default function HomePage() {
       {activePhoto && (
         <div className="photo-modal-overlay" onClick={closeModal}>
           <div className="photo-modal" onClick={e => e.stopPropagation()}>
+
+          
             <button className="delete-photo-btn" onClick={() => handleDeletePhoto(activePhoto)}>
               🗑️
             </button>
+
             <img src={activePhoto} alt="Expanded" />
             <div className="photo-info">
-              <div className="likes">❤️ 128</div>
-              <div className="desc"><b>Description:</b> Primul meu InternSHIP...💀💀💀💀💀</div>
+              <div className="likes">
+                <button onClick={() => handleToggleLike(activePhotoPostId)}>
+                  {likedPosts.has(activePhotoPostId) ? "💔 Unlike" : "❤️ Like"}
+                </button>
+                <span>Total: {likesMap[activePhotoPostId]?.length || 0}</span>
+              </div>
               <div className="comments">
                 <h4>Comments</h4>
-                <div className="comment">
-                  <img src="/public/poze/default-avatar.png" alt="avatar" />
-                  <span><b>sampleUser:</b> Super poza!</span>
-                </div>
-                <div className="comment">
-                  <img src="/public/poze/default-avatar.png" alt="avatar" />
-                  <span><b>sampleUser:</b> Mi-a placut vibe-ul!</span>
+                {(commentsMap[activePhotoPostId] || []).reverse().map((c, i) => {
+                  const userId = c.userId;
+                  fetchUsernameIfNeeded(userId);
+                  const username = usernamesById[userId] || "...";
+                  return (
+                    <div key={i} className="comment">
+                      <span><b>@{username}</b>: {c.content}</span>
+                    </div>
+                  );
+                })}
+                <div className="add-comment">
+                  <input
+                    type="text"
+                    placeholder="Write a comment..."
+                    value={getCommentValue(activePhotoPostId)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewComment(prev => ({ ...prev, [activePhotoPostId]: value }));
+                    }}
+                  />
+                  <button onClick={() => handleAddComment(activePhotoPostId)}>➕</button>
                 </div>
               </div>
             </div>
+
+          
             <span className="close-modal" onClick={closeModal}>✖</span>
           </div>
         </div>
       )}
-        {activeAlbum && (
-          <div className="photo-modal-overlay" onClick={() => setActiveAlbum(null)}>
-              <div className="photo-modal" onClick={(e) => e.stopPropagation()}>
-                  <button className="delete-photo-btn" onClick={() => setActiveAlbum(null)}>
-                      ✖
-                  </button>
-                  <button 
-                      className="album-nav-btn prev" 
-                      onClick={() => setActiveAlbumIndex((prevIndex) => (prevIndex === 0 ? activeAlbum.photos.length - 1 : prevIndex - 1))}
-                  >
-                      ⬅️
-                  </button>
-                  <img src={activeAlbum.photos[activeAlbumIndex]} alt="Album" />
-                  <button 
-                      className="album-nav-btn next" 
-                      onClick={() => setActiveAlbumIndex((prevIndex) => (prevIndex + 1) % activeAlbum.photos.length)}
-                  >
-                      ➡️
-                  </button>
-                  <div className="photo-info">
-                      <div className="likes">❤️ 128</div>
-                      <div className="desc"><b>Description:</b> {activeAlbum.name}</div>
-                      <div className="comments">
-                          <h4>Comments</h4>
-                          <div className="comment">
-                              <img src="/public/poze/default-avatar.png" alt="avatar" />
-                              <span><b>sampleUser:</b> Super album!</span>
-                          </div>
-                          <div className="comment">
-                              <img src="/public/poze/default-avatar.png" alt="avatar" />
-                              <span><b>sampleUser:</b> Poze foarte frumoase!</span>
-                          </div>
-                      </div>
-                  </div>
+
+
+      {activeAlbum && (
+        <div className="photo-modal-overlay" onClick={closeAlbumModal}>
+          <div className="photo-modal" onClick={(e) => e.stopPropagation()}>
+
+            <button
+              className="delete-photo-btn"
+              onClick={() => handleDeletePhoto(activeAlbum.photos[activeAlbumIndex])}
+            >
+              🗑️
+            </button>
+
+            <span className="close-modal" onClick={closeAlbumModal}>✖</span>
+
+            <button className="album-nav-btn prev" onClick={() => {
+              const prevIdx = activeAlbumIndex === 0 ? activeAlbum.photos.length - 1 : activeAlbumIndex - 1;
+              const prevPhoto = activeAlbum.photos[prevIdx];
+              setActiveAlbumIndex(prevIdx);
+              handleAlbumPhotoClick(prevPhoto, activeAlbum, prevIdx);
+            }}>⬅️</button>
+
+            <img src={activeAlbum.photos[activeAlbumIndex]} alt="Album" />
+
+            <button className="album-nav-btn next" onClick={() => {
+              const nextIdx = (activeAlbumIndex + 1) % activeAlbum.photos.length;
+              const nextPhoto = activeAlbum.photos[nextIdx];
+              setActiveAlbumIndex(nextIdx);
+              handleAlbumPhotoClick(nextPhoto, activeAlbum, nextIdx);
+            }}>➡️</button>
+
+            <div className="photo-info">
+              <div className="likes">
+                <button onClick={() => handleToggleLike(activeAlbumPostId)}>
+                  {likedPosts.has(activeAlbumPostId) ? "💔 Unlike" : "❤️ Like"}
+                </button>
+                <span>Total: {likesMap[activeAlbumPostId]?.length || 0}</span>
               </div>
+              <div className="comments">
+                <h4>Comments</h4>
+                {(commentsMap[activeAlbumPostId] || []).reverse().map((c, i) => {
+                  const userId = c.userId;
+                  fetchUsernameIfNeeded(userId);
+                  const username = usernamesById[userId] || "...";
+                  return (
+                    <div key={i} className="comment">
+                      <span><b>@{username}</b>: {c.content}</span>
+                    </div>
+                  );
+                })}
+                <div className="add-comment">
+                  <input
+                    type="text"
+                    placeholder="Write a comment..."
+                    value={getCommentValue(activeAlbumPostId)}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setNewComment(prev => ({ ...prev, [activeAlbumPostId]: value }));
+                    }}
+                  />
+                  <button onClick={() => handleAddComment(activeAlbumPostId)}>➕</button>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
       )}
+
     </div>
   );
 }
