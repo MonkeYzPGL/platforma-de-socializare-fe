@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../HomePage/HomePage.css";
 import "./ViewProfile.css"
 import { useParams, useHistory } from "react-router-dom";
-import { getUserById, getUserPhotos, getPostByImageUrl } from "../../API/user-account";
+import { getUserById, getUserPhotos, getPostByImageUrl, getUsernameById } from "../../API/user-account";
 import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
@@ -28,17 +28,6 @@ export default function ViewProfilePage() {
 
   const [usernamesById, setUsernamesById] = useState({});
 
-  const fetchUsernameIfNeeded = (userId) => {
-    if (!userId || usernamesById[userId]) return;
-
-    getUserById(userId, (res, status) => {
-      if (status === 200 && res.username) {
-        setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
-      }
-    });
-  };
-
-
   const handleMessageClick = () => {
     if (user?.username) {
       history.push(`/chat/${user.username}`);
@@ -56,6 +45,27 @@ export default function ViewProfilePage() {
       });
     }
   }, [id]);
+
+  useEffect(() => {
+  const allUserIds = new Set();
+
+  Object.values(commentsMap).forEach(comments => {
+    comments.forEach(comment => {
+      if (comment.userId && !usernamesById[comment.userId]) {
+        allUserIds.add(comment.userId);
+      }
+    });
+  });
+
+  allUserIds.forEach(userId => {
+    getUsernameById(userId, (res, status) => {
+      if (status === 200 && res.username) {
+        setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
+      }
+    });
+  });
+}, [commentsMap]);
+
 
   useEffect(() => {
     if (id) {
@@ -283,16 +293,15 @@ export default function ViewProfilePage() {
               <div className="desc"><b>Description:</b> Poza adăugată de utilizator</div>
               <div className="comments">
                 <h4>Comments</h4>
-                {(commentsMap[activePhotoPostId] || []).reverse().map((c, i) => {
-                  const userId = c.userId;
-                  fetchUsernameIfNeeded(userId);
-                  const username = usernamesById[userId] || "...";
+               {(commentsMap[activePhotoPostId] || []).slice().reverse().map((c, i) => {
+                  const username = usernamesById[c.userId] || "...";
                   return (
                     <div key={i} className="comment">
                       <span><b>@{username}</b>: {c.content}</span>
                     </div>
                   );
                 })}
+
                 <div className="add-comment" style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "10px" }}>
                   <input
                     type="text"
@@ -343,10 +352,8 @@ export default function ViewProfilePage() {
               <div className="desc"><b>Description:</b> {activeAlbum.name}</div>
               <div className="comments">
                 <h4>Comments</h4>
-                {(commentsMap[activeAlbumPostId] || []).reverse().map((c, i) => {
-                  const userId = c.userId;
-                  fetchUsernameIfNeeded(userId);
-                  const username = usernamesById[userId] || "...";
+                {(commentsMap[activeAlbumPostId] || []).slice().reverse().map((c, i) => {
+                  const username = usernamesById[c.userId] || "...";
                   return (
                     <div key={i} className="comment">
                       <span><b>@{username}</b>: {c.content}</span>

@@ -1,5 +1,3 @@
-// FeedPage.js - modificat pentru a folosi logica de like/unlike si comentarii ca in ViewProfilePage
-
 import React, { useEffect, useState } from "react";
 import "./Feed.css";
 import { getFriendList } from "../../API/neo-friend";
@@ -8,6 +6,7 @@ import {
   getAlbumPhotos,
   getUserAlbums,
   getPostByImageUrl,
+  getUsernameById
 } from "../../API/user-account";
 import {
   getLikes,
@@ -28,23 +27,11 @@ export default function FeedPage() {
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [albumIndexes, setAlbumIndexes] = useState({});
   const [hasNoFriends, setHasNoFriends] = useState(false);
-  const history = useHistory();
-
-  const currentUser = JSON.parse(localStorage.getItem("user")) || {};
-
-  const getCommentValue = (postId) => newComment[postId] || "";
   const [usernamesById, setUsernamesById] = useState({});
 
-  const fetchUsername = (userId) => {
-  if (!userId || usernamesById[userId]) return;
-
-  getUserById(userId, (result, status) => {
-    if (status === 200 && result.username) {
-      setUsernamesById(prev => ({ ...prev, [userId]: result.username }));
-    }
-  });
-};
-
+  const history = useHistory();
+  const currentUser = JSON.parse(localStorage.getItem("user")) || {};
+  const getCommentValue = (postId) => newComment[postId] || "";
 
   useEffect(() => {
     if (!currentUser?.id) return;
@@ -120,7 +107,6 @@ export default function FeedPage() {
             if (p.postId) fetchPostData(p.postId);
           });
         }, 1000);
-
       }
     });
   }, []);
@@ -128,16 +114,12 @@ export default function FeedPage() {
   const fetchPostData = (postId) => {
     getLikes(postId, (res, status) => {
       if (status === 200 && Array.isArray(res)) {
-        setLikesMap((prev) => ({ ...prev, [postId]: res }));
+        setLikesMap(prev => ({ ...prev, [postId]: res }));
 
-        setLikedPosts((prev) => {
+        setLikedPosts(prev => {
           const updated = new Set(prev);
-          const alreadyLiked = res.find((u) => u.id === currentUser.id);
-          if (alreadyLiked) {
-            updated.add(postId);
-          } else {
-            updated.delete(postId);
-          }
+          const alreadyLiked = res.find(u => u.id === currentUser.id);
+          alreadyLiked ? updated.add(postId) : updated.delete(postId);
           return updated;
         });
       }
@@ -145,11 +127,30 @@ export default function FeedPage() {
 
     getComments(postId, (res, status) => {
       if (status === 200) {
-        setCommentsMap((prev) => ({ ...prev, [postId]: res }));
+        setCommentsMap(prev => ({ ...prev, [postId]: res }));
       }
     });
   };
 
+  useEffect(() => {
+    const allUserIds = new Set();
+
+    Object.values(commentsMap).forEach(comments => {
+      comments.forEach(comment => {
+        if (comment.userId && !usernamesById[comment.userId]) {
+          allUserIds.add(comment.userId);
+        }
+      });
+    });
+
+    allUserIds.forEach(userId => {
+      getUsernameById(userId, (res, status) => {
+        if (status === 200 && res.username) {
+          setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
+        }
+      });
+    });
+  }, [commentsMap]);
 
   const handleToggleLike = (postId) => {
     if (!postId || !currentUser?.id) return;
@@ -160,12 +161,9 @@ export default function FeedPage() {
     toggle(currentUser.id, postId, (_, status) => {
       if (status === 200 || status === 201) {
         fetchPostData(postId);
-      } else {
-        console.warn("Like/Unlike failed:", status);
       }
     });
   };
-
 
   const handleAddComment = (postId) => {
     const content = newComment[postId];
@@ -174,21 +172,10 @@ export default function FeedPage() {
     addComment(currentUser.id, postId, content, (_, status) => {
       if (status === 200 || status === 201) {
         fetchPostData(postId);
-        setNewComment((prev) => ({ ...prev, [postId]: "" }));
+        setNewComment(prev => ({ ...prev, [postId]: "" }));
       }
     });
   };
-
-  const fetchUsernameIfNeeded = (userId) => {
-  if (!userId || usernamesById[userId]) return;
-
-  getUserById(userId, (res, status) => {
-    if (status === 200 && res.username) {
-      setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
-    }
-  });
-};
-
 
   return (
     <div className="feed-page">
@@ -252,21 +239,11 @@ export default function FeedPage() {
               </div>
               <div className="comments">
                 <h4>Comments</h4>
-                {(commentsMap[post.postId] || []).reverse().map((c, i) => {
-                  const userId = c.userId; // 
-                  fetchUsernameIfNeeded(userId); 
-                  const username = usernamesById[userId] || "..."; 
-
-                  // console.log("Comentariu:", c, " -> userId extras:", userId, " -> username:", username);
-
-                  return (
-                    <div key={i} className="comment">
-                      <span><b>@{username}</b>: {c.content}</span>
-                    </div>
-                  );
-                })}
-
-
+                {(commentsMap[post.postId] || []).slice().reverse().map((c, i) => (
+                  <div key={i} className="comment">
+                    <span><b>@{usernamesById[c.userId] || "..."}</b>: {c.content}</span>
+                  </div>
+                ))}
                 <div className="add-comment" style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 10 }}>
                   <input
                     type="text"
@@ -275,7 +252,7 @@ export default function FeedPage() {
                     value={getCommentValue(post.postId)}
                     onChange={(e) => {
                       const value = e.target.value;
-                      setNewComment((prev) => ({ ...prev, [post.postId]: value }));
+                      setNewComment(prev => ({ ...prev, [post.postId]: value }));
                     }}
                   />
                   <button className="feed-comment-button" onClick={() => handleAddComment(post.postId)}>

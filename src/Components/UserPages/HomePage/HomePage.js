@@ -6,7 +6,7 @@ import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
-import { uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums, getPostByImageUrl, getUserById } from "../../API/user-account";
+import { uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums, getPostByImageUrl, getUserById, getUsernameById } from "../../API/user-account";
 import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
 
 export default function HomePage() {
@@ -33,16 +33,6 @@ export default function HomePage() {
 
   const [usernamesById, setUsernamesById] = useState({});
   
-    const fetchUsernameIfNeeded = (userId) => {
-      if (!userId || usernamesById[userId]) return;
-  
-      getUserById(userId, (res, status) => {
-        if (status === 200 && res.username) {
-          setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
-        }
-      });
-    };
-
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (storedUser) {
@@ -74,6 +64,27 @@ export default function HomePage() {
       });
     }
   }, []);
+
+  useEffect(() => {
+  const allUserIds = new Set();
+
+  Object.values(commentsMap).forEach(comments => {
+    comments.forEach(comment => {
+      if (comment.userId && !usernamesById[comment.userId]) {
+        allUserIds.add(comment.userId);
+      }
+    });
+  });
+
+  allUserIds.forEach(userId => {
+    getUsernameById(userId, (res, status) => {
+      if (status === 200 && res.username) {
+        setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
+      }
+    });
+  });
+}, [commentsMap]);
+
 
   const fetchLikesAndComments = (postId) => {
     getLikes(postId, (res, status) => {
@@ -380,10 +391,8 @@ export default function HomePage() {
               </div>
               <div className="comments">
                 <h4>Comments</h4>
-                {(commentsMap[activePhotoPostId] || []).reverse().map((c, i) => {
-                  const userId = c.userId;
-                  fetchUsernameIfNeeded(userId);
-                  const username = usernamesById[userId] || "...";
+                {(commentsMap[activePhotoPostId] || []).slice().reverse().map((c, i) => {
+                  const username = usernamesById[c.userId] || "...";
                   return (
                     <div key={i} className="comment">
                       <span><b>@{username}</b>: {c.content}</span>
@@ -450,10 +459,8 @@ export default function HomePage() {
               </div>
               <div className="comments">
                 <h4>Comments</h4>
-                {(commentsMap[activeAlbumPostId] || []).reverse().map((c, i) => {
-                  const userId = c.userId;
-                  fetchUsernameIfNeeded(userId);
-                  const username = usernamesById[userId] || "...";
+                {(commentsMap[activeAlbumPostId] || []).slice().reverse().map((c, i) => {
+                  const username = usernamesById[c.userId] || "...";
                   return (
                     <div key={i} className="comment">
                       <span><b>@{username}</b>: {c.content}</span>
