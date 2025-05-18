@@ -104,6 +104,15 @@ const UserTablePage = () => {
                 >
                     Admin Table
                 </Button>
+
+                <Button 
+                    color="info" 
+                    onClick={() => history.push('/admin-feed')} 
+                    style={{ backgroundColor: '#17a2b8', borderColor: '#17a2b8' }}
+                >
+                    Admin Feed
+                </Button>
+
                 <button 
                     className="logout-icon-button"
                     onClick={handleLogout}
@@ -111,7 +120,6 @@ const UserTablePage = () => {
                 >
                     <i className="fas fa-sign-out-alt"></i>
                 </button>
-
             </div>
 
             <div className="search-wrapper">

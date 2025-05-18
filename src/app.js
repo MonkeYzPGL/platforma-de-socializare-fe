@@ -20,6 +20,7 @@ import ResetPassword from './Components/DefaultPages/ResetPassword/ResetPassword
 import SignUpPage from './Components/DefaultPages/SignUpPage/SignUpPage';
 import UserTablePage from './Components/AdminPages/UserTable/UserTable';
 import ViewProfilePage from './Components/UserPages/ViewProfilePage/ViewProfile';
+import AdminPostsPage from './Components/AdminPages/AdminFeed/AdminPostPage';
 
 class App extends React.Component {
 
@@ -46,6 +47,7 @@ class App extends React.Component {
 
                         <PrivateRoute exact path='/admin-table' component={AdminTablePage} requiredRole="admin" />
                         <PrivateRoute exact path='/user-table' component={UserTablePage} requiredRole="admin" />
+                        <PrivateRoute exact path='/admin-feed' component={AdminPostsPage} requiredRole="admin" />
 
                         <Route exact path="/chat" render={() => <ChatPage />} />
     
