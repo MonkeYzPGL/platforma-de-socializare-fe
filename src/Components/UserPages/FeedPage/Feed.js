@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Feed.css";
+import LikesModal from "../../GeneralComponents/LikesModal/LikesModal"
 import { getFriendList } from "../../API/neo-friend";
 import {
   getUserById,
@@ -28,6 +29,8 @@ export default function FeedPage() {
   const [albumIndexes, setAlbumIndexes] = useState({});
   const [hasNoFriends, setHasNoFriends] = useState(false);
   const [usernamesById, setUsernamesById] = useState({});
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [modalLikesUsers, setModalLikesUsers] = useState([]);
 
   const history = useHistory();
   const currentUser = JSON.parse(localStorage.getItem("user")) || {};
@@ -122,6 +125,17 @@ export default function FeedPage() {
           alreadyLiked ? updated.add(postId) : updated.delete(postId);
           return updated;
         });
+
+        // Get usernames
+        res.forEach(user => {
+          if (!usernamesById[user.id]) {
+            getUsernameById(user.id, (data, status) => {
+              if (status === 200 && data.username) {
+                setUsernamesById(prev => ({ ...prev, [user.id]: data.username }));
+              }
+            });
+          }
+        });
       }
     });
 
@@ -131,26 +145,6 @@ export default function FeedPage() {
       }
     });
   };
-
-  useEffect(() => {
-    const allUserIds = new Set();
-
-    Object.values(commentsMap).forEach(comments => {
-      comments.forEach(comment => {
-        if (comment.userId && !usernamesById[comment.userId]) {
-          allUserIds.add(comment.userId);
-        }
-      });
-    });
-
-    allUserIds.forEach(userId => {
-      getUsernameById(userId, (res, status) => {
-        if (status === 200 && res.username) {
-          setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
-        }
-      });
-    });
-  }, [commentsMap]);
 
   const handleToggleLike = (postId) => {
     if (!postId || !currentUser?.id) return;
@@ -175,6 +169,15 @@ export default function FeedPage() {
         setNewComment(prev => ({ ...prev, [postId]: "" }));
       }
     });
+  };
+
+  const handleShowLikes = (postId) => {
+    const users = (likesMap[postId] || []).map(u => ({
+      ...u,
+      username: usernamesById[u.id] || "..."
+    }));
+    setModalLikesUsers(users);
+    setShowLikesModal(true);
   };
 
   return (
@@ -235,7 +238,12 @@ export default function FeedPage() {
                 <button onClick={() => handleToggleLike(post.postId)}>
                   {likedPosts.has(post.postId) ? "💔 Unlike" : "❤️ Like"}
                 </button>
-                <span>Total: {likesMap[post.postId]?.length || 0}</span>
+                <span
+                  style={{ cursor: "pointer", textDecoration: "underline" }}
+                  onClick={() => handleShowLikes(post.postId)}
+                >
+                  Total: {likesMap[post.postId]?.length || 0}
+                </span>
               </div>
               <div className="comments">
                 <h4>Comments</h4>
@@ -264,6 +272,12 @@ export default function FeedPage() {
           </div>
         ))}
       </div>
+      {showLikesModal && (
+        <LikesModal
+          users={modalLikesUsers}
+          onClose={() => setShowLikesModal(false)}
+        />
+      )}
     </div>
   );
 }

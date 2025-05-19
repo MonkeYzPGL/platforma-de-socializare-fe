@@ -6,6 +6,9 @@ import { getUserById, getUserPhotos, getPostByImageUrl, getUsernameById } from "
 import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
+import LikesModal from "../../GeneralComponents/LikesModal/LikesModal";
+import "../../GeneralComponents/LikesModal/LikesModal.css";
+
 
 export default function ViewProfilePage() {
   const { id } = useParams();
@@ -23,6 +26,9 @@ export default function ViewProfilePage() {
   const [commentsMap, setCommentsMap] = useState({});
   const [newComment, setNewComment] = useState({});
   const [likedPosts, setLikedPosts] = useState(new Set());
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [modalLikesUsers, setModalLikesUsers] = useState([]);
+
 
   const currentUser = JSON.parse(localStorage.getItem("user")) || {};
 
@@ -210,6 +216,16 @@ export default function ViewProfilePage() {
   setActivePhotoPostId(null);      
 };
 
+const handleShowLikes = (postId) => {
+  const users = (likesMap[postId] || []).map(u => ({
+    ...u,
+    username: usernamesById[u.id] || "..."
+  }));
+  setModalLikesUsers(users);
+  setShowLikesModal(true);
+};
+
+
 
   return (
     <div className="homepage-container">
@@ -288,7 +304,17 @@ export default function ViewProfilePage() {
                 <button onClick={() => handleToggleLike(activePhotoPostId)}>
                   {likedPosts.has(activePhotoPostId) ? "💔 Unlike" : "❤️ Like"}
                 </button>
-                <span>Total: {likesMap[activePhotoPostId]?.length || 0}</span>
+                <span
+                    style={{ cursor: "pointer", textDecoration: "underline" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShowLikes(activePhotoPostId);
+                    }}
+                  >
+                    Total: {likesMap[activePhotoPostId]?.length || 0}
+                  </span>
+
+
               </div>
               <div className="desc"><b>Description:</b> Poza adăugată de utilizator</div>
               <div className="comments">
@@ -347,7 +373,17 @@ export default function ViewProfilePage() {
                 <button onClick={() => handleToggleLike(activeAlbumPostId)}>
                   {likedPosts.has(activeAlbumPostId) ? "💔 Unlike" : "❤️ Like"}
                 </button>
-                <span>Total: {likesMap[activeAlbumPostId]?.length || 0}</span>
+               <span
+                  style={{ cursor: "pointer", textDecoration: "underline" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShowLikes(activeAlbumPostId);
+                  }}
+                >
+                  Total: {likesMap[activeAlbumPostId]?.length || 0}
+                </span>
+
+
               </div>
               <div className="desc"><b>Description:</b> {activeAlbum.name}</div>
               <div className="comments">
@@ -378,6 +414,12 @@ export default function ViewProfilePage() {
             </div>
           </div>
         </div>
+      )}
+      {showLikesModal && (
+        <LikesModal
+          users={modalLikesUsers}
+          onClose={() => setShowLikesModal(false)}
+        />
       )}
 
     </div>
