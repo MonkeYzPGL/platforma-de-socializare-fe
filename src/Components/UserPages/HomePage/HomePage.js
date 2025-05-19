@@ -8,6 +8,8 @@ import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
 import { uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums, getPostByImageUrl, getUserById, getUsernameById } from "../../API/user-account";
 import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
+import LikesModal from "../../GeneralComponents/LikesModal/LikesModal";
+import "../../GeneralComponents/LikesModal/LikesModal.css";
 
 export default function HomePage() {
 
@@ -30,6 +32,9 @@ export default function HomePage() {
   const [commentsMap, setCommentsMap] = useState({});
   const [newComment, setNewComment] = useState({});
   const [likedPosts, setLikedPosts] = useState(new Set());
+  const [showLikesModal, setShowLikesModal] = useState(false);
+  const [modalLikesUsers, setModalLikesUsers] = useState([]);
+
 
   const [usernamesById, setUsernamesById] = useState({});
   
@@ -250,6 +255,16 @@ export default function HomePage() {
       }
     });
   };
+
+  const handleShowLikes = (postId) => {
+  const users = (likesMap[postId] || []).map(u => ({
+    ...u,
+    username: usernamesById[u.id] || "..."
+  }));
+  setModalLikesUsers(users);
+  setShowLikesModal(true);
+};
+
   
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -387,7 +402,17 @@ export default function HomePage() {
                 <button onClick={() => handleToggleLike(activePhotoPostId)}>
                   {likedPosts.has(activePhotoPostId) ? "💔 Unlike" : "❤️ Like"}
                 </button>
-                <span>Total: {likesMap[activePhotoPostId]?.length || 0}</span>
+                <span
+                  style={{ cursor: "pointer", textDecoration: "underline" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShowLikes(activePhotoPostId);
+                  }}
+                >
+                  Total: {likesMap[activePhotoPostId]?.length || 0}
+                </span>
+
+
               </div>
               <div className="comments">
                 <h4>Comments</h4>
@@ -455,7 +480,17 @@ export default function HomePage() {
                 <button onClick={() => handleToggleLike(activeAlbumPostId)}>
                   {likedPosts.has(activeAlbumPostId) ? "💔 Unlike" : "❤️ Like"}
                 </button>
-                <span>Total: {likesMap[activeAlbumPostId]?.length || 0}</span>
+                <span
+                  style={{ cursor: "pointer", textDecoration: "underline" }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleShowLikes(activeAlbumPostId);
+                  }}
+                >
+                  Total: {likesMap[activeAlbumPostId]?.length || 0}
+                </span>
+
+
               </div>
               <div className="comments">
                 <h4>Comments</h4>
@@ -483,6 +518,12 @@ export default function HomePage() {
             </div>
           </div>
         </div>
+      )}
+      {showLikesModal && (
+        <LikesModal
+          users={modalLikesUsers}
+          onClose={() => setShowLikesModal(false)}
+        />
       )}
 
     </div>

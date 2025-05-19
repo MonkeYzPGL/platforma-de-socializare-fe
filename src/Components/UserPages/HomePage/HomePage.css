@@ -366,16 +366,25 @@
     cursor: pointer;
   }
 
-  .delete-photo-btn {
+    .delete-photo-btn {
     position: absolute;
-    top: 12px;
-    right: 48px;
+    top: 50px;            
+    left: 750px;          
     background: none;
     border: none;
     font-size: 22px;
     cursor: pointer;
     color: #e74c3c;
     transition: transform 0.2s ease;
+    z-index: 11;
+  }
+
+  @media (max-width: 768px) {
+    .delete-photo-btn {
+      top: 45px;         
+      right: 12px;        
+      font-size: 20px;
+    }
   }
   
   .delete-photo-btn:hover {
