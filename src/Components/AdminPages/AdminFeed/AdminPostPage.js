@@ -134,17 +134,17 @@ export default function AdminPostsPage() {
                     </div>
                 ) : (
                     <div className="admin-single-photo">
-                        <h3>{post.username}</h3>
-                        <div className="admin-photo-wrapper">
-                            <img src={post.url} alt="single" />
-                            <button
-                                className="delete-photo-btn"
-                                onClick={() => handleDeletePhoto(post.userId, null, post.url)}
-                            >
-                                🗑️
-                            </button>
-                        </div>
-                    </div>
+                      <h3>{post.username}</h3>
+                      <div className="admin-photo-wrapper">
+                          <img src={post.url} alt="single" />
+                          <button
+                              className="delete-photo-admin-btn"
+                              onClick={() => handleDeletePhoto(post.userId, post.url)}
+                          >
+                              🗑️
+                          </button>
+                      </div>
+                  </div>
                 )}
             </div>
         ))}

@@ -48,7 +48,7 @@
     object-position: center;
 }
 
-.delete-photo-btn {
+.delete-photo-admin-btn {
     position: absolute;
     top: 0;
     right: 0;
@@ -63,6 +63,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 10;
 }
 
 .delete-album-btn {
@@ -95,6 +96,9 @@
 .admin-photo-wrapper {
     position: relative;
     margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .admin-photo-wrapper img {
