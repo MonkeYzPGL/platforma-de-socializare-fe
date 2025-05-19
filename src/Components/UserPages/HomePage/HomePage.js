@@ -6,7 +6,7 @@ import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
-import { uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums, getPostByImageUrl, getUserById, getUsernameById } from "../../API/user-account";
+import { getProfilePictureUrl, uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums, getPostByImageUrl, getUsernameById } from "../../API/user-account";
 import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
 import LikesModal from "../../GeneralComponents/LikesModal/LikesModal";
 import "../../GeneralComponents/LikesModal/LikesModal.css";
@@ -34,62 +34,70 @@ export default function HomePage() {
   const [likedPosts, setLikedPosts] = useState(new Set());
   const [showLikesModal, setShowLikesModal] = useState(false);
   const [modalLikesUsers, setModalLikesUsers] = useState([]);
-
-
   const [usernamesById, setUsernamesById] = useState({});
   
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-    if (storedUser) {
-      setUser(storedUser);
-      getFriendList(storedUser.id, (res, status) => status === 200 && setFriends(res));
-      getPendingRequests(storedUser.id, (res, status) => status === 200 && setPendingRequests(res));
-
-      getUserAlbums(storedUser.id, (res, status) => {
-        if (status === 200 && Array.isArray(res.albums)) {
-          const photos = [], albumsArr = [];
-          res.albums.forEach(item => {
-            if (item.endsWith(".png")) {
-              photos.push(`https://platforma-de-socializare-image-pool.s3.eu-north-1.amazonaws.com/${storedUser.id}/${item}`);
-            } else {
-              albumsArr.push({ name: item, photos: [] });
-            }
-          });
-          setUserPhotos(photos);
-          setAlbums(albumsArr);
-          albumsArr.forEach((album, idx) => {
-            getAlbumPhotos(storedUser.id, album.name, (res, status) => {
-              if (status === 200) {
-                albumsArr[idx].photos = res.photos;
-                setAlbums([...albumsArr]);
+      const storedUser = JSON.parse(localStorage.getItem("user"));
+      if (storedUser) {
+          setUser(storedUser);
+          getProfilePictureUrl(storedUser.id, (res, status) => {
+              if (status === 200 && res.url) {
+                  const profileUrl = `${res.url}?t=${new Date().getTime()}`;
+                  setSelectedImage(profileUrl);
+                  console.log("URL-ul este", profileUrl);
+              } else {
+                  setSelectedImage();
+                  
               }
-            });
           });
-        }
-      });
-    }
+          
+          getFriendList(storedUser.id, (res, status) => status === 200 && setFriends(res));
+          getPendingRequests(storedUser.id, (res, status) => status === 200 && setPendingRequests(res));
+
+          getUserAlbums(storedUser.id, (res, status) => {
+              if (status === 200 && Array.isArray(res.albums)) {
+                  const photos = [], albumsArr = [];
+                  res.albums.forEach(item => {
+                      if (item.endsWith(".png")) {
+                          photos.push(`https://platforma-de-socializare-image-pool.s3.eu-north-1.amazonaws.com/${storedUser.id}/${item}`);
+                      } else {
+                          albumsArr.push({ name: item, photos: [] });
+                      }
+                  });
+                  setUserPhotos(photos);
+                  setAlbums(albumsArr);
+                  albumsArr.forEach((album, idx) => {
+                      getAlbumPhotos(storedUser.id, album.name, (res, status) => {
+                          if (status === 200) {
+                              albumsArr[idx].photos = res.photos;
+                              setAlbums([...albumsArr]);
+                          }
+                      });
+                  });
+              }
+          });
+      }
   }, []);
 
-  useEffect(() => {
-  const allUserIds = new Set();
+    useEffect(() => {
+    const allUserIds = new Set();
 
-  Object.values(commentsMap).forEach(comments => {
-    comments.forEach(comment => {
-      if (comment.userId && !usernamesById[comment.userId]) {
-        allUserIds.add(comment.userId);
-      }
+    Object.values(commentsMap).forEach(comments => {
+      comments.forEach(comment => {
+        if (comment.userId && !usernamesById[comment.userId]) {
+          allUserIds.add(comment.userId);
+        }
+      });
     });
-  });
 
-  allUserIds.forEach(userId => {
-    getUsernameById(userId, (res, status) => {
-      if (status === 200 && res.username) {
-        setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
-      }
+    allUserIds.forEach(userId => {
+      getUsernameById(userId, (res, status) => {
+        if (status === 200 && res.username) {
+          setUsernamesById(prev => ({ ...prev, [userId]: res.username }));
+        }
+      });
     });
-  });
-}, [commentsMap]);
-
+  }, [commentsMap]);
 
   const fetchLikesAndComments = (postId) => {
     getLikes(postId, (res, status) => {
@@ -116,7 +124,7 @@ export default function HomePage() {
   const handleAlbumPhotoClick = (url, album, index) => {
   setActiveAlbum(album);
   setActiveAlbumIndex(index);
-  setActivePhoto(null); // ← asigură-te că modalul de poză NU se activează
+  setActivePhoto(null); 
   getPostByImageUrl(url, (post, status) => {
     if (status === 200) {
       setActiveAlbumPostId(post.id);
@@ -124,7 +132,6 @@ export default function HomePage() {
     }
   });
 };
-
 
   const handleToggleLike = (postId) => {
     const isLiked = likedPosts.has(postId);
@@ -169,8 +176,6 @@ export default function HomePage() {
     setActiveAlbum(null);
     setActiveAlbumPostId(null);
   };
-
-  
 
   const handleDeletePhoto = (photoUrl) => {
     const parts = photoUrl.split('/');
@@ -236,24 +241,27 @@ export default function HomePage() {
   };
 
   const handleUploadConfirm = () => {
-    if (!pendingFile) return;
-  
-    uploadProfilePicture(user.id, pendingFile, (result, status, error) => {
-      if (status === 200 && result?.url) {
-        alert("Poza a fost actualizata!");
+      if (!pendingFile) return;
 
-        const updatedUser = { ...user, profilePicture: result.url };
-        setUser(updatedUser);
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-  
-        setSelectedImage(result.url);
-  
-        setShowUploadForm(false);
-        setPendingFile(null);
-      } else {
-        alert("Eroare la actualizare.");
-      }
-    });
+      uploadProfilePicture(user.id, pendingFile, (result, status, error) => {
+          if (status === 200 && result?.url) {
+              alert("Poza a fost actualizata!");
+
+              const profileImageUrl = `${result.url}?t=${new Date().getTime()}`;
+              console.log("Profile URL:", profileImageUrl);
+              
+              setSelectedImage(profileImageUrl);
+
+              const updatedUser = { ...user, profilePicture: profileImageUrl };
+              setUser(updatedUser);
+              localStorage.setItem("user", JSON.stringify(updatedUser));
+
+              setShowUploadForm(false);
+              setPendingFile(null);
+          } else {
+              alert("Eroare la actualizare.");
+          }
+      });
   };
 
   const handleShowLikes = (postId) => {
@@ -265,7 +273,6 @@ export default function HomePage() {
   setShowLikesModal(true);
 };
 
-  
   const handleDragOver = (event) => {
     event.preventDefault();
   };
@@ -292,7 +299,6 @@ export default function HomePage() {
     history.push("/pending-requests");
   };
   
-
   return (
     <div className="homepage-container">
       <SearchBar />
@@ -303,12 +309,12 @@ export default function HomePage() {
           =
           <div className="homepage-profile-info">
           <div className="homepage-profile-pic" onClick={handleProfileEditClick}>
-          <img
-            src={selectedImage || (user?.profilePicture || "/public/poze/no_photo.jpg")}
-            alt="Profile"
-            className="profile-preview-img"
-          />
-            <span className="homepage-edit-icon"></span>
+              <img
+                  src={selectedImage || "/poze/no_photo.png"}
+                  alt=""
+                  className="profile-preview-img"
+              />
+              <span className="homepage-edit-icon"></span>
           </div>
             <div className="homepage-profile-text">
               <h1 className="homepage-name">
@@ -444,7 +450,6 @@ export default function HomePage() {
           </div>
         </div>
       )}
-
 
       {activeAlbum && (
         <div className="photo-modal-overlay" onClick={closeAlbumModal}>
