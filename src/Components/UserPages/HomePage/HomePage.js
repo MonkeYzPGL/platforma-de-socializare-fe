@@ -6,7 +6,7 @@ import { getFriendList } from "../../API/neo-friend";
 import { getPendingRequests } from "../../API/friend-request";
 import SearchBar from "../../GeneralComponents/SearchBar/SearchBar";
 import ClickableLogo from "../../ClickableLogo";
-import { getProfilePictureUrl, uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums, getPostByImageUrl, getUsernameById } from "../../API/user-account";
+import { getProfilePictureUrl, uploadProfilePicture, deleteProfilePicture, deleteUserPhoto, getAlbumPhotos, getUserAlbums,deleteUserAlbum ,getPostByImageUrl, getUsernameById } from "../../API/user-account";
 import { likePost, unlikePost, getLikes, getComments, addComment } from "../../API/post-interactions";
 import LikesModal from "../../GeneralComponents/LikesModal/LikesModal";
 import "../../GeneralComponents/LikesModal/LikesModal.css";
@@ -133,6 +133,26 @@ export default function HomePage() {
   });
 };
 
+const handleDeleteAlbum = (albumName) => {
+    if (!user || !user.id) {
+        alert("Utilizatorul nu este autentificat.");
+        return;
+    }
+
+    const confirmDelete = window.confirm(`Sigur vrei sa stergi albumul "${albumName}"?`);
+    if (!confirmDelete) return;
+    
+    deleteUserAlbum(user.id, albumName, (result, status, error) => {
+        if (status === 200) {
+            alert(`Albumul "${albumName}" a fost sters cu succes!`);
+            setAlbums(prev => prev.filter(album => album.name !== albumName));
+            setActiveAlbum(null);
+        } else {
+            alert(`Eroare la stergerea albumului "${albumName}".`);
+        }
+    });
+};
+
   const handleToggleLike = (postId) => {
     const isLiked = likedPosts.has(postId);
     const toggle = isLiked ? unlikePost : likePost;
@@ -178,15 +198,18 @@ export default function HomePage() {
   };
 
   const handleDeletePhoto = (photoUrl) => {
-    const parts = photoUrl.split('/');
-    const userId = parts[parts.length - 2];
-    const photoTitleWithExt = parts[parts.length - 1];
+    if (!user || !user.id) {
+        alert("Utilizatorul nu este autentificat.");
+        return;
+    }
+
+    const photoTitleWithExt = photoUrl.split('/').pop();
     const photoTitle = photoTitleWithExt.replace(/\.[^/.]+$/, "");
     const confirmDelete = window.confirm("Sigur vrei sa stergi aceasta poza?");
 
     if (!confirmDelete) return;
     
-    deleteUserPhoto(userId, photoTitle, (result, status, error) => {
+    deleteUserPhoto(user.id, photoTitle, (result, status, error) => {
       if (status === 200) {
         alert("Poza a fost stearsa!");
         setUserPhotos(prev => prev.filter(p => p !== photoUrl));
@@ -195,7 +218,8 @@ export default function HomePage() {
         alert("Eroare la stergerea pozei.");
       }
     });
-  };
+};
+
 
   const handleDeleteProfilePicture = () => {
     deleteProfilePicture(user.id, (result, status, error) => {
@@ -397,7 +421,6 @@ export default function HomePage() {
         <div className="photo-modal-overlay" onClick={closeModal}>
           <div className="photo-modal" onClick={e => e.stopPropagation()}>
 
-          
             <button className="delete-photo-btn" onClick={() => handleDeletePhoto(activePhoto)}>
               🗑️
             </button>
@@ -457,7 +480,7 @@ export default function HomePage() {
 
             <button
               className="delete-photo-btn"
-              onClick={() => handleDeletePhoto(activeAlbum.photos[activeAlbumIndex])}
+              onClick={() => handleDeleteAlbum(activeAlbum.name)}
             >
               🗑️
             </button>

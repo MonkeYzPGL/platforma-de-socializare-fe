@@ -236,8 +236,8 @@ const handleShowLikes = (postId) => {
           <div className="homepage-profile-info">
             <div className="homepage-profile-pic">
               <img
-                src={user?.profilePicture || "/public/poze/no_photo.jpg"}
-                alt="Profile"
+                src={user?.profilePicture || "/poze/no_photo.png"}
+                alt=""
                 className="profile-preview-img"
               />
             </div>
@@ -289,7 +289,7 @@ const handleShowLikes = (postId) => {
         {userPhotos.length === 0 && albums.length === 0 && (
           <div className="no-photos-message">
             <img src="/public/poze/no-photos-icon.png" alt="No Photos" />
-            <p>This space is so boring...<br />Maybe add some photos?</p>
+            <p>This space is so boring...<br />Tell him to add some photos!?</p>
           </div>
         )}
       </div>
